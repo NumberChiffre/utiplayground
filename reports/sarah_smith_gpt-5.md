@@ -1,0 +1,111 @@
+# Plan Summary — Sarah Smith
+
+## Summary
+Decision: recommend_treatment
+Consensus: Nitrofurantoin monohydrate/macrocrystals 100 mg PO BID x 5 days
+Safety: approve (low)
+
+### Key Reasoning
+- The patient is a 28-year-old nonpregnant woman with acute dysuria and urgency, which meet symptom-based criteria for uncomplicated lower UTI when vaginal symptoms are absent or minimal; although frequency is not reported, two typical lower urinary tract symptoms confer high pretest probability for cystitis in this demographic.
+- All red flags for upper tract or systemic involvement (fever, rigors, flank pain, nausea/vomiting, systemic illness) are explicitly negative, decreasing the likelihood of pyelonephritis and supporting outpatient management without urgent imaging or parenteral therapy; escalation is warranted if any of these develop or if symptoms worsen within 48–72 hours.
+- No complicating factors are present (not pregnant, normal renal function, no catheter, stones, immunocompromise, or recent antibiotics), classifying this as acute uncomplicated cystitis and allowing short-course, narrow-spectrum oral therapy without routine culture at baseline.
+- Because vaginal discharge/irritation data are not recorded, targeted screening for these symptoms should be performed; if absent, empiric treatment without further testing is appropriate, whereas their presence would prompt consideration of vaginitis or urethritis and STI testing.
+- Nitrofurantoin monohydrate/macrocrystals 100 mg orally twice daily for 5 days is guideline-concordant first-line therapy for acute uncomplicated cystitis due to excellent activity against uropathogenic E. coli, minimal collateral ecological impact, and low C. difficile risk; it is preferred here given normal renal function and no drug allergies.
+- TMP-SMX for 3 days and single-dose fosfomycin are reasonable alternatives, but TMP-SMX should be avoided empirically if local E. coli resistance exceeds ~20% or if there was recent TMP-SMX exposure, and fosfomycin may have slightly lower clinical efficacy compared with nitrofurantoin in some studies.
+- Nitrofurantoin is contraindicated in significant renal impairment; with normal renal function and no suspicion for pyelonephritis in this patient, safety is acceptable, and taking doses with food can mitigate gastrointestinal adverse effects.
+- Initial urine culture is not mandatory in an otherwise healthy woman with classic lower urinary tract symptoms, but obtaining culture is advised if symptoms fail to improve by 48–72 hours, recur within weeks, or if atypical features emerge.
+- Analgesic measures (e.g., acetaminophen or NSAIDs if tolerated) and hydration can improve comfort while antibiotic therapy eradicates infection, and patients should be counseled on expected course (symptom improvement in 48 hours) and specific return precautions.
+- Overall confidence in the diagnosis and plan is high based on a classic presentation, absence of red flags, and strong concordance with major guidelines recommending short-course nitrofurantoin for uncomplicated cystitis.
+
+### Algorithm Rationale
+- This patient meets the diagnostic criteria for acute uncomplicated cystitis based on their symptom presentation.
+- No complicating factors were identified that would preclude pharmacist-initiated treatment.
+- No recurrence or relapse pattern was detected based on the patient's UTI history.
+- Based on the patient's clinical profile and the Ontario College of Pharmacists UTI algorithm, Nitrofurantoin macrocrystals has been selected as the most appropriate first-line treatment option.
+
+### Monitoring & Follow-up
+- Take with food
+- Monitor for nausea, headache, dark urine
+
+### Diagnosis Brief
+Clinical Diagnosis & Treatment Brief: Acute Uncomplicated Cystitis (Ontario, Canada)
+
+Executive Summary
+- 28-year-old nonpregnant woman from Ontario with acute dysuria and urinary urgency; no fever, flank pain, rigors, nausea/vomiting, or systemic features; no catheter, stones, immunocompromise, recent antibiotics, or recurrence history. Presentation strongly supports acute uncomplicated lower UTI. Confidence in diagnosis: high. Empiric therapy is appropriate without baseline urine culture in this low-risk, classic presentation when vaginal symptoms are absent. ([aafp.org](https://www.aafp.org/pubs/afp/issues/2015/1101/p778.html/1000?utm_source=openai), [ncbi.nlm.nih.gov](https://www.ncbi.nlm.nih.gov/books/NBK459322/?utm_source=openai))
+- Most likely diagnosis: acute uncomplicated bacterial cystitis. First-line therapy recommended: nitrofurantoin monohydrate/macrocrystals 100 mg orally twice daily for 5 days. Rationale: guideline-endorsed first-line agent with excellent activity against uropathogenic E. coli, low Clostridioides difficile risk, minimal collateral damage, and very favorable Ontario susceptibility (~97–98% for E. coli); TMP-SMX resistance approximates the 20% threshold at which empirical use should be avoided. ([idsociety.org](https://www.idsociety.org/practice-guideline/uncomplicated-cystitis-and-pyelonephritis-uti/?utm_source=openai), [pmc.ncbi.nlm.nih.gov](https://pmc.ncbi.nlm.nih.gov/articles/PMC9744262/?utm_source=openai), [cmajopen.ca](https://www.cmajopen.ca/content/10/4/E1044?utm_source=openai))
+- High-level plan: initiate nitrofurantoin with safety counseling (take with food; recognize benign urine discoloration; stop and seek care for pulmonary/hepatic symptoms); symptomatic analgesia; reassess at 48–72 hours; obtain urinalysis/culture only if not improving or if atypical/red-flag features emerge; escalate for signs of pyelonephritis. ([nice.org.uk](https://www.nice.org.uk/guidance/ng109/chapter/recommendations?utm_source=openai), [cdc.gov](https://www.cdc.gov/uti/hcp/clinical-guidance/culture-stewardship-without-catheter.html?utm_source=openai))
+
+Algorithm Alignment
+- Case definition (meets): acute dysuria + urinary urgency fulfill OCP’s UTI algorithm entry criteria (acute dysuria OR ≥2 lower tract symptoms). No vaginal symptoms reported; explicitly screen to confirm absence. Decision: proceed with pharmacist/primary-care–level empiric treatment. ([ocpinfo.com](https://www.ocpinfo.com/wp-content/uploads/2022/12/assessment-prescribing-algorithm-urinary-tract-infection-english.pdf))
+- Exclusions (absent): no pregnancy, male sex, age <12, immunocompromise, catheter, stones, renal dysfunction, or red flags (fever, rigors, flank/back pain, N/V). No relapse within 4 weeks or recurrent pattern. Decision: treat as uncomplicated cystitis without routine culture at baseline. ([ocpinfo.com](https://www.ocpinfo.com/wp-content/uploads/2022/12/assessment-prescribing-algorithm-urinary-tract-infection-english.pdf))
+- Recommended regimen per Ontario algorithm: nitrofurantoin macrocrystals 100 mg PO BID × 5 days; align with IDSA and NICE first-line choices emphasizing narrow-spectrum agents; avoid fluoroquinolones and broad β-lactams for routine uncomplicated cystitis. ([ocpinfo.com](https://www.ocpinfo.com/wp-content/uploads/2022/12/assessment-prescribing-algorithm-urinary-tract-infection-english.pdf), [idsociety.org](https://www.idsociety.org/practice-guideline/uncomplicated-cystitis-and-pyelonephritis-uti/?utm_source=openai), [nice.org.uk](https://www.nice.org.uk/guidance/ng109/chapter/recommendations?utm_source=openai))
+- Follow-up per algorithm/guidelines: reassess within 48–72 hours for clinical improvement; refer if deterioration, red-flag emergence, or non-response. ([ocpinfo.com](https://www.ocpinfo.com/wp-content/uploads/2022/12/assessment-prescribing-algorithm-urinary-tract-infection-english.pdf), [nice.org.uk](https://www.nice.org.uk/guidance/ng109/chapter/recommendations/?utm_source=openai))
+
+Differential Diagnosis
+- Acute uncomplicated bacterial cystitis (most likely): acute dysuria and urgency in a healthy premenopausal woman without systemic features; high pretest probability; typical pathogens predominantly E. coli. ([aafp.org](https://www.aafp.org/pubs/afp/issues/2015/1101/p778.html/1000?utm_source=openai))
+- Urethritis due to STI (Chlamydia trachomatis, Neisseria gonorrhoeae, HSV): consider if vaginal/urethral discharge, genital lesions, or recent high-risk sexual exposure; pursue NAAT if symptoms/signs suggest or if culture negative with persistent dysuria. ([aafp.org](https://www.aafp.org/pubs/afp/issues/2015/1101/p778.html/1000?utm_source=openai))
+- Vulvovaginitis (candida, BV, trichomonas): would present with prominent discharge/odor/pruritus rather than isolated urinary symptoms; query explicitly; examine if present. ([aafp.org](https://www.aafp.org/pubs/afp/issues/2015/1101/p778.html/1000?utm_source=openai))
+- Irritant/chemical cystitis or overactive bladder: ask about new products/caffeine/alcohol; typically lacks bacteriuria and systemic signs. ([aafp.org](https://www.aafp.org/pubs/afp/issues/2015/1101/p778.html/1000?utm_source=openai))
+- Interstitial cystitis/bladder pain syndrome: usually chronic pelvic/bladder pain with frequency/urgency; acute onset and expected antibiotic response make it less likely here. ([aafp.org](https://www.aafp.org/pubs/afp/issues/2015/1101/p778.html/1000?utm_source=openai))
+- Nephrolithiasis: classically colicky flank pain and hematuria; absence of flank pain/systemic signs reduces likelihood. ([aafp.org](https://www.aafp.org/pubs/afp/issues/2015/1101/p778.html/1000?utm_source=openai))
+
+Therapeutic Plan & Justification
+- First-line regimen
+  - Nitrofurantoin monohydrate/macrocrystals (macroBID-equivalent) 100 mg PO twice daily for 5 days. Take with food to enhance absorption and tolerance; not suitable if pyelonephritis is suspected. Renal function is normal, meeting modern renal use thresholds. ([idsociety.org](https://www.idsociety.org/practice-guideline/uncomplicated-cystitis-and-pyelonephritis-uti/?utm_source=openai), [empr.com](https://www.empr.com/drug/macrobid/?utm_source=openai), [nice.org.uk](https://www.nice.org.uk/guidance/ng109/chapter/recommendations?utm_source=openai))
+  - Regional resistance support: Ontario data show E. coli nitrofurantoin susceptibility ≈97–98%; TMP-SMX resistance near ≈20% (borderline for empirical use). This favors nitrofurantoin empirically. ([pmc.ncbi.nlm.nih.gov](https://pmc.ncbi.nlm.nih.gov/articles/PMC9744262/?utm_source=openai), [cmajopen.ca](https://www.cmajopen.ca/content/10/4/E1044?utm_source=openai))
+- Alternatives considered (not selected initially)
+  - TMP-SMX DS 160/800 mg PO BID × 3 days: acceptable where local resistance ≤20% and no recent TMP-SMX exposure; avoid with ACEI/ARB or spironolactone due to hyperkalemia risk. Not first choice here given Ontario resistance approximating 20%. ([idsociety.org](https://www.idsociety.org/practice-guideline/uncomplicated-cystitis-and-pyelonephritis-uti/?utm_source=openai), [cmajopen.ca](https://www.cmajopen.ca/content/10/4/E1044?utm_source=openai), [pubmed.ncbi.nlm.nih.gov](https://pubmed.ncbi.nlm.nih.gov/20585070/?utm_source=openai))
+  - Fosfomycin tromethamine 3 g PO single dose: convenient and active vs MDR, but RCT shows lower clinical resolution vs 5-day nitrofurantoin; reserve for intolerance/resistance scenarios. ([jamanetwork.com](https://jamanetwork.com/journals/jama/fullarticle/2679131?utm_source=openai))
+  - Fluoroquinolones and broad-spectrum β-lactams: avoided as first-line due to collateral damage, C. difficile risk, and stewardship priorities. ([idsociety.org](https://www.idsociety.org/practice-guideline/uncomplicated-cystitis-and-pyelonephritis-uti/?utm_source=openai))
+- Diagnostics
+  - No routine baseline urine culture for classic, low-risk uncomplicated cystitis; culture if no improvement by 48–72 hours, early relapse, recurrence, or atypical features. ([cdc.gov](https://www.cdc.gov/uti/hcp/clinical-guidance/culture-stewardship-without-catheter.html?utm_source=openai), [ncbi.nlm.nih.gov](https://www.ncbi.nlm.nih.gov/books/NBK459322/?utm_source=openai))
+- Symptomatic care
+  - Analgesia with acetaminophen or NSAIDs (if tolerated); maintain hydration; limit bladder irritants (caffeine, alcohol) during acute illness. ([nice.org.uk](https://www.nice.org.uk/guidance/ng109/chapter/recommendations?utm_source=openai))
+
+Safety Review Summary (Pharmacist Screening)
+- Risk level: low for this patient (young, nonpregnant, normal renal function, no interacting meds).
+- Key safety flags and how addressed
+  - Exclude upper-tract/systemic infection before nitrofurantoin (insufficient tissue/serum penetration). We confirmed absence of fever, flank pain, rigors, vomiting. Provide escalation precautions. ([empr.com](https://www.empr.com/drug/macrobid/?utm_source=openai))
+  - Renal function dependency: contemporary guidance supports use if eGFR ≥45 mL/min for routine courses; cautious use at eGFR 30–44 in select cases; labeling still lists <60 mL/min as a contraindication. Patient has normal renal function. ([nice.org.uk](https://www.nice.org.uk/guidance/ng109/chapter/recommendations?utm_source=openai), [ndclist.com](https://ndclist.com/ndc/68001-606/label?utm_source=openai))
+  - Rare pulmonary/hepatic reactions: counsel to stop and seek care for new cough/dyspnea/chest pain/fever or jaundice/pruritus/dark urine; although rare with short courses, vigilance is advised. ([medicinesresources.nhs.uk](https://www.medicinesresources.nhs.uk/nitrofurantoin-reminder-of-the-risks-of-pulmonary-and-hepatic-adverse-drug-reactions.html?utm_source=openai))
+  - Peripheral neuropathy and hemolysis in G6PD deficiency: risk is low here; counsel on new paresthesias or hemolysis symptoms. ([empr.com](https://www.empr.com/drug/macrobid/?utm_source=openai))
+- Drug–drug/product interactions to avoid during therapy
+  - Magnesium trisilicate–containing antacids (reduced absorption) and uricosurics such as probenecid/sulfinpyrazone (increase serum levels but reduce urinary concentrations). Patient currently on no meds; still counsel to avoid these. ([medlibrary.org](https://medlibrary.org/lib/rx/meds/nitrofurantoin-monohydratemacrocrystals-26/?utm_source=openai))
+  - If future TMP-SMX use is considered with ACEI/ARB/spironolactone, warn about hyperkalemia; monitor potassium/creatinine within 3–5 days. ([pubmed.ncbi.nlm.nih.gov](https://pubmed.ncbi.nlm.nih.gov/20585070/?utm_source=openai))
+
+Monitoring & Follow-up
+- Clinical response check at 48–72 hours: expect symptom improvement within 48 hours; if no improvement or worsening, obtain urinalysis and urine culture, reassess diagnosis (consider vaginitis/urethritis), and adjust therapy. ([nice.org.uk](https://www.nice.org.uk/guidance/ng109/chapter/recommendations/?utm_source=openai))
+- Red-flag surveillance: same-day urgent evaluation for fever ≥38.0°C, rigors, flank pain, persistent vomiting, systemic toxicity; consider parenteral therapy if pyelonephritis suspected. ([idsociety.org](https://www.idsociety.org/practice-guideline/uncomplicated-cystitis-and-pyelonephritis-uti/?utm_source=openai))
+- Safety monitoring (throughout 5-day course): stop drug and seek care for new cough/dyspnea/chest pain or hepatic symptoms (jaundice, dark urine, pruritus, RUQ pain). Routine labs not required for healthy adults on a short course unless symptoms occur. ([medicinesresources.nhs.uk](https://www.medicinesresources.nhs.uk/nitrofurantoin-reminder-of-the-risks-of-pulmonary-and-hepatic-adverse-drug-reactions.html?utm_source=openai))
+- Documentation and notification: record episode; notify primary care provider; reassess if recurrence develops (≥2 in 6 months or ≥3 in 12 months) for prevention strategies. ([ocpinfo.com](https://www.ocpinfo.com/practice-education/expanded-scope-of-practice/minor-ailment/))
+
+Patient Counseling (to be delivered in clear language)
+- Diagnosis and expectations: bladder infection (lower UTI) with burning and urgency; antibiotics start working quickly—most feel better within 48 hours, but complete all doses. ([nice.org.uk](https://www.nice.org.uk/guidance/ng109/chapter/recommendations/?utm_source=openai))
+- How to take nitrofurantoin: 100 mg capsule twice daily with food for 5 days; take at roughly the same times; do not skip doses; harmless brown urine discoloration can occur. ([empr.com](https://www.empr.com/drug/macrobid/?utm_source=openai))
+- Common side effects: nausea, headache; taking with meals reduces stomach upset. If severe vomiting prevents keeping pills down, call for reassessment. ([empr.com](https://www.empr.com/drug/macrobid/?utm_source=openai))
+- Serious but rare effects: stop and seek care for new or worsening cough, trouble breathing, chest pain, fever, yellowing of eyes/skin, very dark urine with itching, or numbness/tingling in hands/feet. ([medicinesresources.nhs.uk](https://www.medicinesresources.nhs.uk/nitrofurantoin-reminder-of-the-risks-of-pulmonary-and-hepatic-adverse-drug-reactions.html?utm_source=openai))
+- What to avoid during treatment: magnesium trisilicate antacids and gout medicines like probenecid; these reduce drug effectiveness or increase side effects. Limit bladder irritants (caffeine, alcohol) while symptomatic. ([medlibrary.org](https://medlibrary.org/lib/rx/meds/nitrofurantoin-monohydratemacrocrystals-26/?utm_source=openai))
+- Hydration and comfort: drink enough fluids to avoid dehydration; consider acetaminophen or an NSAID if appropriate for pain relief. ([nice.org.uk](https://www.nice.org.uk/guidance/ng109/chapter/recommendations?utm_source=openai))
+- When to seek urgent care: fever ≥38.0°C, shaking chills, flank/back pain, vomiting, feeling very unwell, or worse/no improvement after 48–72 hours. ([nice.org.uk](https://www.nice.org.uk/guidance/ng109/chapter/recommendations/?utm_source=openai))
+- STI/vaginal symptoms: if vaginal discharge, odor, itching, genital sores, or new sexual exposures are present, notify us—testing for STIs or vaginitis may be needed. ([aafp.org](https://www.aafp.org/pubs/afp/issues/2015/1101/p778.html/1000?utm_source=openai))
+
+Evidence Pointers (guidelines, studies, surveillance; publication year and source; relevance)
+- IDSA/ESCMID Clinical Practice Guideline (2010 update; webpage updated 2018), Infectious Diseases Society of America: Defines acute uncomplicated cystitis and endorses nitrofurantoin, TMP-SMX, and fosfomycin as first-line agents; emphasizes collateral damage and resistance thresholds. URL: https://www.idsociety.org/practice-guideline/uncomplicated-cystitis-and-pyelonephritis-uti/
+- NICE NG109 (2018; updates through 2024), National Institute for Health and Care Excellence: Primary care recommendations for lower UTI; first-choice nitrofurantoin; reassess if no improvement at 48 hours; renal eGFR considerations (use with caution at eGFR 30–44 in select cases). URL: https://www.nice.org.uk/guidance/ng109/chapter/recommendations
+- Ontario College of Pharmacists UTI Algorithm (Sept 2021), OCP: Ontario-specific assessment and prescribing tool; recommends nitrofurantoin 100 mg BID × 5 days; cites Ontario antibiogram (~3% nitrofurantoin resistance; ~20% TMP‑SMX). URL: https://www.ocpinfo.com/wp-content/uploads/2022/12/assessment-prescribing-algorithm-urinary-tract-infection-english.pdf
+- CMAJ Open (2022) Ontario Urine Isolate Susceptibility (ICES/CMAJ Open): Province‑wide cohort shows very high E. coli susceptibility to nitrofurantoin (≈97–98%) and ~20% non‑susceptibility to TMP‑SMX; supports empiric nitrofurantoin. URL: https://www.cmajopen.ca/content/10/4/E1044 and open‑access PMC: https://pmc.ncbi.nlm.nih.gov/articles/PMC9744262/
+- CARSS Report (2022), Public Health Agency of Canada: National surveillance indicates E. coli non‑susceptibility to TMP‑SMX around 20% in urine isolates (2020), aligning with the IDSA 20% threshold caution. URL: https://www.canada.ca/en/public-health/services/publications/drugs-health-products/canadian-antimicrobial-resistance-surveillance-system-report-2022.html
+- RCT—Nitrofurantoin vs Fosfomycin (2018), JAMA (Huttner et al.): 5‑day nitrofurantoin superior to single‑dose fosfomycin for clinical and microbiologic resolution in uncomplicated cystitis. URL: https://jamanetwork.com/journals/jama/fullarticle/2679131 (PMC: https://pmc.ncbi.nlm.nih.gov/articles/PMC6134435/)
+- AAFP Review on Dysuria (2015), American Academy of Family Physicians: Symptom‑based diagnosis supports empiric treatment in nonpregnant women with dysuria/urgency in absence of vaginal symptoms; informs differential and testing strategy. URL: https://www.aafp.org/pubs/afp/issues/2015/1101/p778.html/1000
+- CDC Culture Stewardship for UTI (2024), Centers for Disease Control and Prevention: Urine culture not routinely needed in uncomplicated cystitis unless failure or red flags; supports targeted culture strategy. URL: https://www.cdc.gov/uti/hcp/clinical-guidance/culture-stewardship-without-catheter.html
+- Nitrofurantoin Product Label (current US labeling), DailyMed/DrugCentral/MPR: Contraindications (significant renal impairment, late pregnancy, prior hepatic injury), warnings (pulmonary/hepatic reactions), and limitation (not for pyelonephritis); informs safety counseling. URLs: https://ndclist.com/ndc/68001-606/label and https://www.empr.com/drug/macrobid/ and https://drugcentral.org/label/e0c4eedf-9037-4fc5-9844-2e40d58f123b/view
+- MHRA Drug Safety Update (2023), UK Medicines Regulator: Reminder to monitor for pulmonary and hepatic adverse reactions to nitrofurantoin—even with short courses. URL: https://www.medicinesresources.nhs.uk/nitrofurantoin-reminder-of-the-risks-of-pulmonary-and-hepatic-adverse-drug-reactions.html
+- Population-based study—TMP-SMX and Hyperkalemia with ACEI/ARB (2010), Arch Intern Med (Ontario cohort): ~7‑fold increased risk of hyperkalemia‑associated hospitalization; informs alternative selection/monitoring if TMP‑SMX is used. URL: https://pubmed.ncbi.nlm.nih.gov/20585070/
+
+Therapeutic Orders (for chart)
+- Nitrofurantoin monohydrate/macrocrystals 100 mg PO BID × 5 days; take with food.
+- Symptomatic support: acetaminophen or NSAID PRN pain (if no contraindications); hydration; avoid bladder irritants.
+- No baseline urine culture; if no improvement or worsening by 48–72 hours, order urinalysis and urine culture, reassess differential (include STI/vaginitis), and adjust therapy.
+- Safety-net and escalation instructions as above; document episode and notify patient’s primary care provider.
+
+End of brief.

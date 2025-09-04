@@ -1,0 +1,436 @@
+[
+  {
+    "name": "Sarah Smith",
+    "patient": {
+      "age": 28,
+      "sex": "female",
+      "pregnancy_status": "no",
+      "renal_function_summary": "normal",
+      "symptoms": {
+        "dysuria": true,
+        "urgency": true,
+        "frequency": false,
+        "suprapubic_pain": false,
+        "hematuria": false
+      },
+      "red_flags": {
+        "fever": false,
+        "rigors": false,
+        "flank_pain": false,
+        "nausea_vomiting": false,
+        "systemic": false
+      },
+      "history": {
+        "antibiotics_last_90d": false,
+        "allergies": [],
+        "meds": [],
+        "ACEI_ARB_use": false,
+        "catheter": false,
+        "stones": false,
+        "immunocompromised": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": false,
+        "recurrent_12m": false
+      },
+      "locale_code": "CA-ON"
+    }
+  },
+  {
+    "name": "Evelyn Carter Escalation Red Flags",
+    "patient": {
+      "age": 67,
+      "sex": "female",
+      "pregnancy_status": "no",
+      "renal_function_summary": "impaired",
+      "egfr_mL_min": 35,
+      "symptoms": {
+        "dysuria": true,
+        "urgency": true,
+        "frequency": true,
+        "suprapubic_pain": true,
+        "hematuria": true,
+        "confusion": false,
+        "delirium": false,
+        "gross_hematuria": false
+      },
+      "red_flags": {
+        "fever": true,
+        "rigors": true,
+        "flank_pain": true,
+        "back_pain": true,
+        "nausea_vomiting": true,
+        "systemic": true
+      },
+      "history": {
+        "antibiotics_last_90d": false,
+        "allergies": [],
+        "meds": [],
+        "ACEI_ARB_use": false,
+        "catheter": false,
+        "stones": false,
+        "immunocompromised": false,
+        "neurogenic_bladder": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": false,
+        "recurrent_12m": false
+      },
+      "locale_code": "CA-ON"
+    }
+  },
+  {
+    "name": "Daniel Kim Escalation",
+    "patient": {
+      "age": 35,
+      "sex": "male",
+      "pregnancy_status": "unknown",
+      "renal_function_summary": "normal",
+      "symptoms": {
+        "dysuria": true,
+        "urgency": true,
+        "frequency": false,
+        "suprapubic_pain": false,
+        "hematuria": false
+      },
+      "red_flags": {
+        "fever": false,
+        "rigors": false,
+        "flank_pain": false,
+        "nausea_vomiting": false,
+        "systemic": false
+      },
+      "history": {
+        "antibiotics_last_90d": false,
+        "allergies": [],
+        "meds": [],
+        "ACEI_ARB_use": false,
+        "catheter": false,
+        "stones": false,
+        "immunocompromised": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": false,
+        "recurrent_12m": false
+      },
+      "locale_code": "CA-ON"
+    }
+  },
+  {
+    "name": "Priya Nair Escalation Pregnancy",
+    "patient": {
+      "age": 22,
+      "sex": "female",
+      "pregnancy_status": "pregnant",
+      "renal_function_summary": "normal",
+      "symptoms": {
+        "dysuria": true,
+        "urgency": true,
+        "frequency": true,
+        "suprapubic_pain": false,
+        "hematuria": false
+      },
+      "red_flags": {
+        "fever": false,
+        "rigors": false,
+        "flank_pain": false,
+        "nausea_vomiting": false,
+        "systemic": false
+      },
+      "history": {
+        "antibiotics_last_90d": false,
+        "allergies": [],
+        "meds": [],
+        "ACEI_ARB_use": false,
+        "catheter": false,
+        "stones": false,
+        "immunocompromised": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": false,
+        "recurrent_12m": false
+      },
+      "locale_code": "CA-ON"
+    }
+  },
+  {
+    "name": "Marcus Lee Escalation Catheter",
+    "patient": {
+      "age": 45,
+      "sex": "male",
+      "pregnancy_status": "unknown",
+      "renal_function_summary": "normal",
+      "symptoms": {
+        "dysuria": true,
+        "urgency": true,
+        "frequency": true,
+        "suprapubic_pain": true,
+        "hematuria": false
+      },
+      "red_flags": {
+        "fever": false,
+        "rigors": false,
+        "flank_pain": false,
+        "nausea_vomiting": false,
+        "systemic": false
+      },
+      "history": {
+        "antibiotics_last_90d": false,
+        "allergies": [],
+        "meds": [],
+        "ACEI_ARB_use": false,
+        "catheter": true,
+        "stones": false,
+        "immunocompromised": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": false,
+        "recurrent_12m": false
+      },
+      "locale_code": "CA-ON"
+    }
+  },
+  {
+    "name": "Gloria Jones",
+    "patient": {
+      "age": 41,
+      "sex": "female",
+      "pregnancy_status": "no",
+      "renal_function_summary": "normal",
+      "symptoms": {
+        "dysuria": true,
+        "urgency": false,
+        "frequency": true,
+        "suprapubic_pain": true,
+        "hematuria": false
+      },
+      "red_flags": {
+        "fever": true,
+        "rigors": false,
+        "flank_pain": true,
+        "nausea_vomiting": false,
+        "systemic": false
+      },
+      "history": {
+        "antibiotics_last_90d": false,
+        "allergies": [
+          "sulfa"
+        ],
+        "meds": [
+          "lisinopril"
+        ],
+        "ACEI_ARB_use": true,
+        "catheter": false,
+        "stones": false,
+        "immunocompromised": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": false,
+        "recurrent_12m": false
+      },
+      "locale_code": "CA-ON"
+    }
+  },
+  {
+    "name": "Tiffany McDonalds",
+    "patient": {
+      "age": 35,
+      "sex": "female",
+      "pregnancy_status": "no",
+      "renal_function_summary": "normal",
+      "symptoms": {
+        "dysuria": true,
+        "urgency": true,
+        "frequency": true,
+        "suprapubic_pain": false,
+        "hematuria": false
+      },
+      "red_flags": {
+        "fever": false,
+        "rigors": false,
+        "flank_pain": false,
+        "nausea_vomiting": false,
+        "systemic": false
+      },
+      "history": {
+        "antibiotics_last_90d": true,
+        "allergies": [],
+        "meds": [],
+        "ACEI_ARB_use": false,
+        "catheter": false,
+        "stones": false,
+        "immunocompromised": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": true,
+        "recurrent_12m": true
+      },
+      "locale_code": "CA-ON"
+    }
+  },
+  {
+    "name": "Nina Patel Prescriber Sign-off",
+    "patient": {
+      "age": 30,
+      "sex": "female",
+      "pregnancy_status": "no",
+      "renal_function_summary": "normal",
+      "symptoms": {
+        "dysuria": true,
+        "urgency": true,
+        "frequency": true,
+        "suprapubic_pain": false,
+        "hematuria": false
+      },
+      "red_flags": {
+        "fever": false,
+        "rigors": false,
+        "flank_pain": false,
+        "nausea_vomiting": false,
+        "systemic": false
+      },
+      "history": {
+        "antibiotics_last_90d": false,
+        "allergies": [],
+        "meds": [],
+        "ACEI_ARB_use": false,
+        "catheter": false,
+        "stones": false,
+        "immunocompromised": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": false,
+        "recurrent_12m": false
+      },
+      "locale_code": "CA-ON"
+    }
+  },
+  {
+    "name": "Linda Park Safety Escalation",
+    "patient": {
+      "age": 52,
+      "sex": "female",
+      "pregnancy_status": "no",
+      "renal_function_summary": "normal",
+      "symptoms": {
+        "dysuria": true,
+        "urgency": true,
+        "frequency": false,
+        "suprapubic_pain": false,
+        "hematuria": false
+      },
+      "red_flags": {
+        "fever": false,
+        "rigors": false,
+        "flank_pain": false,
+        "nausea_vomiting": false,
+        "systemic": false
+      },
+      "history": {
+        "antibiotics_last_90d": false,
+        "allergies": [
+          "nitrofurantoin"
+        ],
+        "meds": [
+          "lisinopril",
+          "spironolactone",
+          "ibuprofen"
+        ],
+        "ACEI_ARB_use": false,
+        "catheter": false,
+        "stones": false,
+        "immunocompromised": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": false,
+        "recurrent_12m": false
+      },
+      "locale_code": "CA-ON"
+    }
+  },
+  {
+    "name": "Maya Thompson",
+    "patient": {
+      "age": 26,
+      "sex": "female",
+      "pregnancy_status": "no",
+      "renal_function_summary": "normal",
+      "symptoms": {
+        "dysuria": true,
+        "urgency": true,
+        "frequency": false,
+        "suprapubic_pain": false,
+        "hematuria": false
+      },
+      "red_flags": {
+        "fever": false,
+        "rigors": false,
+        "flank_pain": false,
+        "nausea_vomiting": false,
+        "systemic": false
+      },
+      "history": {
+        "antibiotics_last_90d": false,
+        "allergies": [],
+        "meds": [],
+        "ACEI_ARB_use": false,
+        "catheter": false,
+        "stones": false,
+        "immunocompromised": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": false,
+        "recurrent_12m": false
+      },
+      "locale_code": "CA-ON"
+    }
+  },
+  {
+    "name": "Olivia Green",
+    "patient": {
+      "age": 32,
+      "sex": "female",
+      "pregnancy_status": "no",
+      "renal_function_summary": "normal",
+      "symptoms": {
+        "dysuria": true,
+        "urgency": true,
+        "frequency": false,
+        "suprapubic_pain": false,
+        "hematuria": false
+      },
+      "red_flags": {
+        "fever": false,
+        "rigors": false,
+        "flank_pain": false,
+        "nausea_vomiting": false,
+        "systemic": false
+      },
+      "history": {
+        "antibiotics_last_90d": false,
+        "allergies": [],
+        "meds": [],
+        "ACEI_ARB_use": false,
+        "catheter": false,
+        "stones": false,
+        "immunocompromised": false
+      },
+      "recurrence": {
+        "relapse_within_4w": false,
+        "recurrent_6m": false,
+        "recurrent_12m": false
+      },
+      "locale_code": "CA-ON"
+    }
+  }
+]

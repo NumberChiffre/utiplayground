@@ -1,0 +1,41 @@
+  {
+    "name": "Monica Patel",
+    "visit_note": "26-year-old female presents to clinic with 2 days of burning with urination and urinary urgency. No fever, chills, flank pain, nausea, or vomiting. Mild suprapubic discomfort noted; no vaginal discharge or pelvic pain. Not pregnant. No antibiotics in the past 3 months. No known drug allergies. Medications: oral contraceptive pill. No history of urinary tract stones, neurogenic bladder, or catheter use. Exam: afebrile (36.8°C), normal vitals, mild suprapubic tenderness, no CVA tenderness. Impression: acute uncomplicated cystitis."
+  },
+  {
+    "name": "Evelyn Carter",
+    "visit_note": "67-year-old female presents with 24 hours of fever (38.6°C), chills, rigors, right-sided flank pain, and nausea with two episodes of non-bloody emesis. Reports mild dysuria at onset, denies hematuria. Not pregnant. Past medical history: chronic kidney disease stage 3. Medications: lisinopril. Allergies: sulfa (rash). No catheter or structural urinary abnormalities known; no stone history. Exam: ill-appearing, tachycardic, right CVA tenderness, abdomen soft without suprapubic tenderness. Impression: acute pyelonephritis with renal impairment; consider ED evaluation and IV therapy."
+  },
+  {
+    "name": "Daniel Kim",
+    "visit_note": "35-year-old male reports 3 days of dysuria and increased urinary frequency. Denies fever, chills, flank pain, back pain, or nausea/vomiting. No visible blood in urine. No prior UTIs. No antibiotics in the last 90 days. No known drug allergies. Medications: none. No catheter, no kidney stones, no immunocompromising conditions. Exam: afebrile, normal vitals, abdomen benign, no CVA tenderness. Impression: male with lower urinary tract symptoms concerning for UTI; complicated by male sex—requires clinician assessment and potential further workup."
+  }
+  ,
+  {
+    "name": "Priya Nair",
+    "visit_note": "22-year-old pregnant female (12 weeks gestation) presents with urinary frequency and mild burning on urination for 1 day. Denies fever, chills, flank pain, nausea/vomiting. No vaginal bleeding or discharge. No history of stones or catheter. No medications aside from prenatal vitamins. No known drug allergies. Impression: early pregnancy with LUTS concerning for cystitis; pregnancy is a complicating factor; obtain urine culture and consider pregnancy-safe antibiotics."
+  },
+  {
+    "name": "Linda Gomez",
+    "visit_note": "74-year-old female in assisted living with new-onset confusion and reduced appetite over 2 days. Staff note strong-smelling urine. Denies dysuria; unable to reliably report urinary symptoms. Afebrile, vitals stable. No flank pain, no CVA tenderness. Past history: dementia, hypertension. Meds: amlodipine. Impression: nonspecific symptoms in elderly; avoid treating asymptomatic bacteriuria; evaluate for other causes of delirium."
+  },
+  {
+    "name": "Marcus Lee",
+    "visit_note": "45-year-old male with indwelling Foley catheter for neurogenic bladder presents with fever (38.2°C) and suprapubic discomfort. Reports urine appears cloudy. Denies flank pain or vomiting. No known drug allergies. Medications: tamsulosin. Impression: catheter-associated UTI; obtain urine culture from catheter port, replace catheter, and consider broader coverage per guidelines."
+  },
+  {
+    "name": "Hannah Wright",
+    "visit_note": "31-year-old female with history of recurrent UTIs (3 episodes in the past 10 months) presents with 1 day of dysuria and urgency. No fever, flank pain, or vaginal symptoms. No antibiotics in the past 90 days. No known allergies. Impression: recurrent uncomplicated cystitis; consider prior culture history, resistance patterns, and prophylaxis strategies."
+  },
+  {
+    "name": "Omar Hassan",
+    "visit_note": "58-year-old male with diabetes mellitus presents with 2 days of urinary frequency and dysuria. Denies fever or flank pain. Blood glucose moderately elevated at home. No recent antibiotics. No known drug allergies. Impression: UTI symptoms with diabetes (complicating factor); assess for complicated infection and consider broader evaluation."
+  },
+  {
+    "name": "Alice Chen",
+    "visit_note": "17-year-old female presents with dysuria and urinary urgency for 24 hours. Afebrile, no flank pain or nausea. Not sexually active by report. No antibiotics in past 3 months. No allergies. Impression: adolescent with acute cystitis symptoms; note age <18 as complicating consideration for some agents/dosing."
+  },
+  {
+    "name": "Rosa Martinez",
+    "visit_note": "33-year-old female reports hematuria with dysuria and urgency for 2 days. Denies fever, flank pain, or nausea. Not pregnant. No antibiotics in last 3 months. No known drug allergies. Impression: acute cystitis with visible hematuria; consider urine dipstick/microscopy and standard first-line therapy."
+  }
