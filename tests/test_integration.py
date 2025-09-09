@@ -65,10 +65,10 @@ class TestUTIAssessmentWorkflow:
 
         with patch("src.services._run_agent_stream_with_retry") as mock_run:
             with patch(
-                "src.services.make_clinical_reasoning_agent"
+                "src.services.make_clinical_reasoning_agent",
             ) as mock_clinical_agent:
                 with patch(
-                    "src.services.make_safety_validation_agent"
+                    "src.services.make_safety_validation_agent",
                 ) as mock_safety_agent:
                     with patch("src.services.stream_text_and_citations") as mock_stream:
                         # Setup mocks
@@ -150,11 +150,11 @@ class TestUTIAssessmentWorkflow:
         # Clinical reasoning should still work for referral cases
         mock_clinical_output = ClinicalReasoningOutput(
             reasoning=[
-                "Patient presents with systemic symptoms indicating complicated UTI"
+                "Patient presents with systemic symptoms indicating complicated UTI",
             ],
             confidence=0.95,
             recommendations=[
-                "Refer to physician for IV antibiotics and further workup"
+                "Refer to physician for IV antibiotics and further workup",
             ],
         )
 
@@ -182,7 +182,7 @@ class TestUTIAssessmentWorkflow:
         # Male patients should be referred due to complexity
         assert assessment_result["decision"] == Decision.refer_complicated
         assert "male_patient" in assessment_result.get(
-            "triggered_complicating_factors", []
+            "triggered_complicating_factors", [],
         )
 
     @pytest.mark.asyncio
@@ -293,7 +293,7 @@ class TestFullConsolidatedWorkflow:
                 mock_stream.return_value = {
                     "text": "Current guidelines support nitrofurantoin",
                     "citations": [
-                        {"title": "UTI Guidelines", "url": "http://example.com"}
+                        {"title": "UTI Guidelines", "url": "http://example.com"},
                     ],
                 }
 
@@ -302,7 +302,7 @@ class TestFullConsolidatedWorkflow:
                     mock_safety_func.return_value = mock_safety.model_dump()
 
                     result = await uti_complete_patient_assessment(
-                        patient_data, model="gpt-4.1"
+                        patient_data, model="gpt-4.1",
                     )
 
                     # Verify consolidated result structure
@@ -346,7 +346,9 @@ class TestWorkflowErrorHandling:
         # Final consolidated should also handle gracefully
         result = await uti_complete_patient_assessment(invalid_data)
         # Check if error exists at top level or in nested structure
-        assert "error" in result or any("error" in str(v) for v in result.values() if isinstance(v, dict))
+        assert "error" in result or any(
+            "error" in str(v) for v in result.values() if isinstance(v, dict)
+        )
 
     # NOTE: Removed agent failure test - complex mocking scenario not essential for core coverage
 

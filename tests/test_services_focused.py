@@ -153,7 +153,7 @@ class TestServiceParameterHandling:
 
         with patch("src.services.assess_uti_patient") as mock_assess:
             with patch(
-                "src.services.get_contraindications_from_assessment"
+                "src.services.get_contraindications_from_assessment",
             ) as mock_contraindications:
                 with patch("src.services.web_research") as mock_web:
                     # Setup mocks
@@ -162,7 +162,7 @@ class TestServiceParameterHandling:
                     mock_web.side_effect = Exception("Web research failed")
 
                     result = await services.prescribing_considerations(
-                        patient_data, "CA-ON"
+                        patient_data, "CA-ON",
                     )
 
                     # Should still return basic considerations despite web research failure
@@ -197,7 +197,7 @@ class TestServiceParameterHandling:
                     mock_stream.return_value = mock_streamed_output
                     mock_agent.return_value = MagicMock(model="gpt-4.1")
                     mock_assess.return_value = MagicMock(
-                        model_dump=lambda: {"decision": "recommend_treatment"}
+                        model_dump=lambda: {"decision": "recommend_treatment"},
                     )
 
                     result = await services.deep_research_diagnosis(

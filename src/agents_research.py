@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from agents import Agent, AgentOutputSchema, RunConfig, Runner, WebSearchTool
+from agents import Agent, AgentOutputSchema, ModelSettings, Runner, WebSearchTool
 from tenacity import (
     retry,
     retry_if_exception_type,
@@ -33,15 +33,28 @@ AGENT_TEMPERATURES: dict[str, float] = {
 def _construct_agent_with_temperature(**kwargs) -> Agent:
     name = str(kwargs.get("name", ""))
     temp = AGENT_TEMPERATURES.get(name, 0.2)
-    try:
-        return Agent(temperature=temp, **kwargs)
-    except TypeError:
-        agent: Agent = Agent(**kwargs)
-        try:
-            agent.temperature = float(temp)
-        except Exception:
-            pass
-        return agent
+    
+    # Use ModelSettings to configure model parameters
+    # Allow additional model configuration through environment variables or kwargs
+    model_settings_dict = {"temperature": temp}
+    
+    # Add max_tokens if specified (useful for controlling response length)
+    max_tokens = kwargs.pop("max_tokens", None)
+    if max_tokens is not None:
+        model_settings_dict["max_tokens"] = max_tokens
+    
+    # Add any extra model configuration arguments
+    extra_args = kwargs.pop("extra_model_args", None)
+    if extra_args:
+        model_settings_dict["extra_args"] = extra_args
+    
+    model_settings = ModelSettings(**model_settings_dict)
+    
+    # Add model_settings to kwargs, but allow override if already specified
+    if "model_settings" not in kwargs:
+        kwargs["model_settings"] = model_settings
+    
+    return Agent(**kwargs)
 
 
 @retry(
@@ -51,19 +64,7 @@ def _construct_agent_with_temperature(**kwargs) -> Agent:
     retry=retry_if_exception_type(Exception),
 )
 async def stream_text_and_citations(agent: Agent, prompt: str) -> dict:
-    try:
-        temperature = float(
-            getattr(
-                agent,
-                "temperature",
-                AGENT_TEMPERATURES.get(getattr(agent, "name", ""), 0.2),
-            )
-        )
-        stream = Runner.run_streamed(
-            agent, prompt, run_config=RunConfig(temperature=temperature)
-        )  # type: ignore
-    except Exception:
-        stream = Runner.run_streamed(agent, prompt)
+    stream = Runner.run_streamed(agent, prompt)
     buf: list[str] = []
     citations: list[dict] = []
     seen: set[str] = set()
@@ -93,7 +94,7 @@ async def stream_text_and_citations(agent: Agent, prompt: str) -> dict:
             elif "web_search_call" in data_type_str and "completed" in data_type_str:
                 try:
                     if hasattr(data, "item") and hasattr(
-                        data.item, "web_search_result"
+                        data.item, "web_search_result",
                     ):
                         search_result = data.item.web_search_result
                         if hasattr(search_result, "results"):
@@ -196,7 +197,7 @@ def make_clinical_reasoning_agent(model: str) -> Agent:
             "- No chain-of-thought or explanatory text outside the JSON structure"
         ),
         output_type=AgentOutputSchema(
-            ClinicalReasoningOutput, strict_json_schema=False
+            ClinicalReasoningOutput, strict_json_schema=False,
         ),
         tools=[WebSearchTool()],
     )

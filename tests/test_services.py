@@ -87,7 +87,7 @@ class TestClinicalReasoning:
                 result = await clinical_reasoning(patient_data, model="gpt-4.1")
 
                 assert result["reasoning"] == [
-                    "Patient presents with classic UTI symptoms"
+                    "Patient presents with classic UTI symptoms",
                 ]
                 assert result["confidence"] == 0.85
                 assert result["model"] == "gpt-4.1"
@@ -111,7 +111,7 @@ class TestClinicalReasoning:
         with patch("src.services.make_clinical_reasoning_agent") as mock_make_agent:
             with patch("src.services._run_agent_stream_with_retry") as mock_run:
                 with patch(
-                    "src.services.make_clinical_reasoning_prompt"
+                    "src.services.make_clinical_reasoning_prompt",
                 ) as mock_prompt:
                     mock_agent = AsyncMock()
                     mock_agent.model = "gpt-4.1"
@@ -256,7 +256,7 @@ class TestWebResearch:
                 mock_stream.return_value = mock_streamed_output
 
                 result = await web_research(
-                    "UTI treatment guidelines", "CA-ON", model="gpt-4.1"
+                    "UTI treatment guidelines", "CA-ON", model="gpt-4.1",
                 )
 
                 assert (
@@ -305,7 +305,7 @@ class TestPrescribingConsiderations:
 
         with patch("src.services.assess_uti_patient") as mock_assess:
             with patch(
-                "src.services.get_contraindications_from_assessment"
+                "src.services.get_contraindications_from_assessment",
             ) as mock_contraindications:
                 with patch("src.services.web_research") as mock_web_research:
                     mock_assessment = MagicMock()
@@ -314,7 +314,7 @@ class TestPrescribingConsiderations:
                     mock_web_research.return_value = mock_web_research_result
 
                     result = await prescribing_considerations(
-                        patient_data, "CA-ON", model="gpt-4.1"
+                        patient_data, "CA-ON", model="gpt-4.1",
                     )
 
                     assert "considerations" in result
@@ -335,7 +335,7 @@ class TestPrescribingConsiderations:
 
         with patch("src.services.assess_uti_patient") as mock_assess:
             with patch(
-                "src.services.get_contraindications_from_assessment"
+                "src.services.get_contraindications_from_assessment",
             ) as mock_contraindications:
                 with patch("src.services.web_research") as mock_web_research:
                     mock_assessment = MagicMock()
@@ -382,7 +382,7 @@ class TestDeepResearchDiagnosis:
                     mock_stream.return_value = mock_streamed_output
 
                     result = await deep_research_diagnosis(
-                        patient_data, model="gpt-4.1"
+                        patient_data, model="gpt-4.1",
                     )
 
                     assert (
@@ -435,7 +435,7 @@ class TestAssessAndPlan:
             assert result["decision"] == Decision.recommend_treatment
             assert "recommendation" in result
             assert result["rationale"] == [
-                "Patient meets criteria for uncomplicated UTI"
+                "Patient meets criteria for uncomplicated UTI",
             ]
             assert result["version"] == "v1"
             assert "narrative" in result
@@ -525,7 +525,7 @@ class TestFinalConsolidatedAgent:
             prescribing_considerations=AsyncMock(return_value={"considerations": []}),
             web_research=AsyncMock(return_value={"summary": "Research summary"}),
             deep_research_diagnosis=AsyncMock(
-                return_value={"diagnosis": "UTI diagnosis"}
+                return_value={"diagnosis": "UTI diagnosis"},
             ),
             follow_up_plan=AsyncMock(return_value={"follow_up_plan": {}}),
         ):
@@ -533,7 +533,7 @@ class TestFinalConsolidatedAgent:
                 mock_validator.return_value = {"passed": True, "severity": "low"}
 
                 result = await uti_complete_patient_assessment(
-                    patient_data, model="gpt-4.1"
+                    patient_data, model="gpt-4.1",
                 )
 
                 assert result["orchestration"] == "final_consolidated"
@@ -568,17 +568,20 @@ class TestFinalConsolidatedAgent:
             prescribing_considerations=AsyncMock(return_value={"considerations": []}),
             web_research=AsyncMock(return_value={"summary": "Research summary"}),
             deep_research_diagnosis=AsyncMock(
-                return_value={"diagnosis": "Complex UTI"}
+                return_value={"diagnosis": "Complex UTI"},
             ),
         ):
             with patch("src.services.state_validator") as mock_validator:
                 mock_validator.return_value = {"passed": True, "severity": "low"}
 
                 result = await uti_complete_patient_assessment(
-                    patient_data, model="gpt-4.1"
+                    patient_data, model="gpt-4.1",
                 )
 
-                assert result["consensus_recommendation"] == "Escalate to human (interrupt)"
+                assert (
+                    result["consensus_recommendation"]
+                    == "Escalate to human (interrupt)"
+                )
                 assert (
                     result["safety_validation"] is None
                 )  # No safety validation for referrals
@@ -590,8 +593,10 @@ class TestFinalConsolidatedAgent:
 
         result = await uti_complete_patient_assessment(patient_data, model="gpt-4.1")
 
-        # Check if error exists at top level or in nested structure  
-        has_error = "error" in result or any("error" in str(v) for v in result.values() if isinstance(v, dict))
+        # Check if error exists at top level or in nested structure
+        has_error = "error" in result or any(
+            "error" in str(v) for v in result.values() if isinstance(v, dict)
+        )
         assert has_error
         if "error" in result:
             assert "Final consolidation failed" in result["error"]

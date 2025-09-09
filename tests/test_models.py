@@ -238,7 +238,7 @@ class TestRedFlags:
                 red_flags.back_pain,
                 red_flags.nausea_vomiting,
                 red_flags.systemic,
-            ]
+            ],
         )
 
 
@@ -407,10 +407,10 @@ class TestPatientState:
     def test_patient_state_with_egfr(self):
         patient = PatientStateFactory(
             renal_function_summary=RenalFunction.impaired,
-            egfr_mL_min=25.0,
+            egfr_ml_min=25.0,
         )
 
-        assert patient.egfr_mL_min == 25.0
+        assert patient.egfr_ml_min == 25.0
 
     def test_patient_state_locale_code_validation(self):
         with pytest.raises(ValidationError):
@@ -505,7 +505,7 @@ class TestClinicalReasoningOutput:
                     "title": "UTI Guidelines",
                     "url": "http://example.com",
                     "relevance": "high",
-                }
+                },
             ],
             proposed_regimen_text="Nitrofurantoin 100 mg PO BID x 5 days",
         )

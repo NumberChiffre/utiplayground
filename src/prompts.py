@@ -12,7 +12,7 @@ SYSTEM_ROLE_WEB_RESEARCH = """You are a clinical research assistant providing ev
 
 
 def make_clinical_reasoning_prompt(
-    patient: PatientState, assessment_details: dict | None = None
+    patient: PatientState, assessment_details: dict | None = None,
 ) -> str:
     assessment_block = ""
     if isinstance(assessment_details, dict) and assessment_details:

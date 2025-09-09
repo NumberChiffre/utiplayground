@@ -14,7 +14,7 @@ class TestEnsureOpenAIClient:
             with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
                 with patch("src.client.AsyncOpenAI") as mock_openai:
                     with patch(
-                        "src.client.set_default_openai_client"
+                        "src.client.set_default_openai_client",
                     ) as mock_set_default:
                         mock_instance = AsyncMock()
                         mock_openai.return_value = mock_instance
@@ -71,7 +71,7 @@ class TestEnsureOpenAIClient:
             with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
                 with patch("src.client.AsyncOpenAI") as mock_openai:
                     with patch(
-                        "src.client.set_default_openai_client"
+                        "src.client.set_default_openai_client",
                     ) as mock_set_default:
                         mock_instance = AsyncMock()
                         mock_openai.return_value = mock_instance
@@ -166,7 +166,7 @@ class TestClientIntegration:
             with patch.dict(os.environ, {"OPENAI_API_KEY": "test-api-key"}):
                 with patch("src.client.AsyncOpenAI") as mock_openai:
                     with patch(
-                        "src.client.set_default_openai_client"
+                        "src.client.set_default_openai_client",
                     ) as mock_set_default:
                         mock_instance = AsyncMock()
                         mock_openai.return_value = mock_instance

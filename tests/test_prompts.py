@@ -202,7 +202,7 @@ class TestPromptConsistency:
         # Generate different types of prompts
         clinical_prompt = make_clinical_reasoning_prompt(patient)
         safety_prompt = make_safety_validation_prompt(
-            patient, "recommend_treatment", "test regimen"
+            patient, "recommend_treatment", "test regimen",
         )
         research_prompt = make_web_research_prompt("test query", "CA-ON")
 
@@ -222,7 +222,7 @@ class TestPromptConsistency:
 
         clinical_prompt = make_clinical_reasoning_prompt(patient)
         safety_prompt = make_safety_validation_prompt(
-            patient, "recommend_treatment", "test"
+            patient, "recommend_treatment", "test",
         )
 
         # Both should include patient age
@@ -241,7 +241,7 @@ class TestPromptConsistency:
         prompts = [
             make_clinical_reasoning_prompt(patient),
             make_safety_validation_prompt(
-                patient, "recommend_treatment", "test regimen"
+                patient, "recommend_treatment", "test regimen",
             ),
             make_web_research_prompt("test query", "CA-ON"),
             make_diagnosis_xml_prompt(patient, assessment),

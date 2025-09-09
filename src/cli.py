@@ -48,7 +48,7 @@ def _load_sample_patient(name: str | None) -> tuple[str, dict] | None:
 
 
 def _ask(
-    prompt: str, default: str | None = None, choices: list[str] | None = None
+    prompt: str, default: str | None = None, choices: list[str] | None = None,
 ) -> str:
     suffix = f" [{default}]" if default is not None else ""
     if choices:
@@ -132,7 +132,7 @@ def _ask_bool(prompt: str, default: bool = False) -> bool:
     default_text = "y" if default else "n"
     while True:
         console.print(
-            f"[bold]{prompt}[/bold] [y/n or free-text] [{default_text}]: ", end=""
+            f"[bold]{prompt}[/bold] [y/n or free-text] [{default_text}]: ", end="",
         )
         val = input().strip()
         parsed = _to_bool_fuzzy(val)
@@ -144,7 +144,7 @@ def _ask_bool(prompt: str, default: bool = False) -> bool:
             if val == "":
                 return default
             console.print(
-                "[yellow]Could not parse; please answer y/n or a descriptive value[/yellow]"
+                "[yellow]Could not parse; please answer y/n or a descriptive value[/yellow]",
             )
 
 
@@ -194,22 +194,22 @@ def _wizard(prefill: dict | None = None) -> dict:
         pre.get("renal_function_summary", "normal"),
         ["normal", "impaired", "failure", "unknown"],
     )
-    egfr_mL_min = _ask_float("eGFR (mL/min) — optional", pre.get("egfr_mL_min"))
+    egfr_ml_min = _ask_float("eGFR (mL/min) — optional", pre.get("egfr_ml_min"))
     locale_code = _ask("Region code (e.g., CA-ON)", pre.get("locale_code", "CA-ON"))
 
     console.print(Panel.fit("Symptoms", style="bold yellow"))
     dysuria = _ask_bool(
-        "Dysuria (painful urination)", bool(symptoms.get("dysuria", True))
+        "Dysuria (painful urination)", bool(symptoms.get("dysuria", True)),
     )
     urgency = _ask_bool(
         "Urgency (sudden compelling need to urinate)",
         bool(symptoms.get("urgency", True)),
     )
     frequency = _ask_bool(
-        "Frequency (above normal for you)", bool(symptoms.get("frequency", False))
+        "Frequency (above normal for you)", bool(symptoms.get("frequency", False)),
     )
     suprapubic_pain = _ask_bool(
-        "Suprapubic pain (lower abdomen)", bool(symptoms.get("suprapubic_pain", False))
+        "Suprapubic pain (lower abdomen)", bool(symptoms.get("suprapubic_pain", False)),
     )
     hematuria = _ask_bool(
         "Hematuria (visible blood or positive dipstick)",
@@ -228,16 +228,16 @@ def _wizard(prefill: dict | None = None) -> dict:
     fever = _ask_bool("Fever ≥38°C (past 24–48h)", bool(red_flags.get("fever", False)))
     rigors = _ask_bool("Rigors (shaking chills)", bool(red_flags.get("rigors", False)))
     flank_pain = _ask_bool(
-        "Flank/CVA tenderness", bool(red_flags.get("flank_pain", False))
+        "Flank/CVA tenderness", bool(red_flags.get("flank_pain", False)),
     )
     back_pain = _ask_bool(
-        "Back pain (modifier)", bool(red_flags.get("back_pain", False))
+        "Back pain (modifier)", bool(red_flags.get("back_pain", False)),
     )
     nausea_vomiting = _ask_bool(
-        "Nausea or vomiting", bool(red_flags.get("nausea_vomiting", False))
+        "Nausea or vomiting", bool(red_flags.get("nausea_vomiting", False)),
     )
     systemic = _ask_bool(
-        "Systemic illness/sepsis concern", bool(red_flags.get("systemic", False))
+        "Systemic illness/sepsis concern", bool(red_flags.get("systemic", False)),
     )
 
     console.print(Panel.fit("History", style="bold yellow"))
@@ -248,16 +248,16 @@ def _wizard(prefill: dict | None = None) -> dict:
     allergies = _ask_list("Allergies", list(history.get("allergies", [])))
     meds = _ask_list("Active medications", list(history.get("meds", [])))
     acei_arb = _ask_bool(
-        "ACE inhibitor or ARB use?", bool(history.get("ACEI_ARB_use", False))
+        "ACE inhibitor or ARB use?", bool(history.get("ACEI_ARB_use", False)),
     )
     catheter = _ask_bool(
-        "Indwelling urinary catheter present?", bool(history.get("catheter", False))
+        "Indwelling urinary catheter present?", bool(history.get("catheter", False)),
     )
     stones = _ask_bool(
-        "Known urinary tract stones history?", bool(history.get("stones", False))
+        "Known urinary tract stones history?", bool(history.get("stones", False)),
     )
     immunocompromised = _ask_bool(
-        "Immunocompromised?", bool(history.get("immunocompromised", False))
+        "Immunocompromised?", bool(history.get("immunocompromised", False)),
     )
     neurogenic_bladder = _ask_bool(
         "Neurogenic bladder / abnormal urinary function?",
@@ -274,10 +274,10 @@ def _wizard(prefill: dict | None = None) -> dict:
         bool(recurrence.get("relapse_within_4w", False)),
     )
     recurrent_6m = _ask_bool(
-        "≥2 UTIs within 6 months?", bool(recurrence.get("recurrent_6m", False))
+        "≥2 UTIs within 6 months?", bool(recurrence.get("recurrent_6m", False)),
     )
     recurrent_12m = _ask_bool(
-        "≥3 UTIs within 12 months?", bool(recurrence.get("recurrent_12m", False))
+        "≥3 UTIs within 12 months?", bool(recurrence.get("recurrent_12m", False)),
     )
 
     patient = {
@@ -285,7 +285,7 @@ def _wizard(prefill: dict | None = None) -> dict:
         "sex": sex,
         "pregnancy_status": pregnancy_status,
         "renal_function_summary": renal_function_summary,
-        "egfr_mL_min": egfr_mL_min,
+        "egfr_ml_min": egfr_ml_min,
         "symptoms": {
             "dysuria": dysuria,
             "urgency": urgency,
@@ -337,7 +337,7 @@ def _print_assessment(result: dict) -> None:
     rec: dict[str, Any] | None = result.get("recommendation")
     if rec:
         table = Table(
-            title="Treatment Recommendation", box=box.SIMPLE_HEAD, highlight=True
+            title="Treatment Recommendation", box=box.SIMPLE_HEAD, highlight=True,
         )
         table.add_column("Regimen")
         table.add_column("Dose")
@@ -404,10 +404,10 @@ async def _run(mode: str, patient: dict, model: str) -> dict:
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="uti-cli", description="CLI for UTI CLI agent")
     p.add_argument(
-        "--json", type=str, help="Path to JSON with PatientState payload", default=None
+        "--json", type=str, help="Path to JSON with PatientState payload", default=None,
     )
     p.add_argument(
-        "--sample", type=str, help="Sample name from sample_patients.json", default=None
+        "--sample", type=str, help="Sample name from sample_patients.json", default=None,
     )
     p.add_argument(
         "--mode",
@@ -471,7 +471,7 @@ def main() -> None:
         patient = _wizard(prefill)
     if title_name:
         console.print(
-            Panel.fit(f"Running assessment for: {title_name}", style="bold magenta")
+            Panel.fit(f"Running assessment for: {title_name}", style="bold magenta"),
         )
 
     # Initialize OpenAI client for agent modes if available
@@ -496,8 +496,8 @@ def main() -> None:
         path = agent.get("orchestration_path", "standard")
         console.print(
             Panel.fit(
-                f"Consensus Recommendation ({path}):\n{consensus}", style="bold blue"
-            )
+                f"Consensus Recommendation ({path}):\n{consensus}", style="bold blue",
+            ),
         )
 
         # Show prescriber sign-off requirement prominently if present
@@ -511,7 +511,7 @@ def main() -> None:
         assess = agent.get("assessment") or {}
         if assess:
             console.print(
-                Panel.fit("Deterministic Assessment Snapshot", style="bold green")
+                Panel.fit("Deterministic Assessment Snapshot", style="bold green"),
             )
             _print_assessment(assess)
 
@@ -532,7 +532,7 @@ def main() -> None:
                 Panel.fit(
                     f"Clinical Reasoning - Confidence: {confidence_str}",
                     style="bold yellow",
-                )
+                ),
             )
 
             narrative = str(cr.get("narrative", "")).strip()
@@ -554,8 +554,8 @@ def main() -> None:
 
             console.print(
                 Panel.fit(
-                    f"Safety: {approval} - Risk Level: {risk_level}", style="bold green"
-                )
+                    f"Safety: {approval} - Risk Level: {risk_level}", style="bold green",
+                ),
             )
 
             nar = str(sv.get("narrative", "")).strip()
@@ -575,7 +575,7 @@ def main() -> None:
             nar = str(pc.get("narrative", ""))
             if nar:
                 console.print(
-                    Panel.fit("Prescribing Considerations", style="bold magenta")
+                    Panel.fit("Prescribing Considerations", style="bold magenta"),
                 )
                 # Clean up the narrative formatting
                 if nar.startswith("Prescribing considerations: "):
@@ -619,7 +619,7 @@ def main() -> None:
                 if summary_lines:
                     summary_text = " ".join(summary_lines)
                     console.print(
-                        Panel.fit("Clinical Diagnosis Summary", style="bold cyan")
+                        Panel.fit("Clinical Diagnosis Summary", style="bold cyan"),
                     )
                     console.print(f"[dim]{summary_text}[/dim]")
                 else:
@@ -632,7 +632,7 @@ def main() -> None:
         if ver:
             verdict = str(ver.get("verdict", "pass"))
             console.print(
-                Panel.fit(f"Verification verdict: {verdict}", style="bold yellow")
+                Panel.fit(f"Verification verdict: {verdict}", style="bold yellow"),
             )
 
     if args.mode == "both":
@@ -656,7 +656,7 @@ def main() -> None:
 
 
 def _write_report_md(
-    result: dict, report_dir: str | None = None, name: str | None = None
+    result: dict, report_dir: str | None = None, name: str | None = None,
 ) -> None:
     try:
         base_dir = (
@@ -686,10 +686,10 @@ def _write_report_md(
             # Include prescriber sign-off flag if available
             try:
                 signoff_required = bool(
-                    agent_out.get("prescriber_signoff_required", False)
+                    agent_out.get("prescriber_signoff_required", False),
                 )
                 md.append(
-                    f"Prescriber Sign-off Required: {'Yes' if signoff_required else 'No'}"
+                    f"Prescriber Sign-off Required: {'Yes' if signoff_required else 'No'}",
                 )
             except Exception:
                 pass
@@ -702,21 +702,21 @@ def _write_report_md(
                     risk_level = risk_level.replace("RiskLevel.", "")
                 md.append(f"Safety: {approval} ({risk_level})")
             if isinstance(reasoning.get("reasoning"), list) and reasoning.get(
-                "reasoning"
+                "reasoning",
             ):
                 md.append("")
                 md.append("### Key Reasoning")
                 for r in reasoning.get("reasoning", []):
                     md.append(f"- {r}")
             if isinstance(assessment.get("rationale"), list) and assessment.get(
-                "rationale"
+                "rationale",
             ):
                 md.append("")
                 md.append("### Algorithm Rationale")
                 for r in assessment.get("rationale", []):
                     md.append(f"- {r}")
             if isinstance(follow.get("monitoring_checklist"), list) and follow.get(
-                "monitoring_checklist"
+                "monitoring_checklist",
             ):
                 md.append("")
                 md.append("### Monitoring & Follow-up")

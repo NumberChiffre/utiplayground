@@ -78,13 +78,13 @@ class PatientStateFactory(factory.Factory):
         lambda obj: PregnancyStatus.not_applicable
         if obj.sex == Sex.male
         else fake.random_element(
-            elements=[PregnancyStatus.not_pregnant, PregnancyStatus.unknown]
+            elements=[PregnancyStatus.not_pregnant, PregnancyStatus.unknown],
         ),
     )
     renal_function_summary = factory.Faker(
-        "random_element", elements=[RenalFunction.normal, RenalFunction.impaired]
+        "random_element", elements=[RenalFunction.normal, RenalFunction.impaired],
     )
-    egfr_mL_min = None
+    egfr_ml_min = None
     symptoms = factory.SubFactory(SymptomsFactory)
     red_flags = factory.SubFactory(RedFlagsFactory)
     history = factory.SubFactory(HistoryFactory)
@@ -117,7 +117,7 @@ class ComplicatedUTIPatientFactory(PatientStateFactory):
     pregnancy_status = PregnancyStatus.not_pregnant
     renal_function_summary = RenalFunction.normal
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, urgency=True, frequency=True
+        SymptomsFactory, dysuria=True, urgency=True, frequency=True,
     )
     red_flags = factory.SubFactory(RedFlagsFactory, fever=True, rigors=True)
     history = factory.SubFactory(HistoryFactory)
@@ -130,7 +130,7 @@ class MaleUTIPatientFactory(PatientStateFactory):
     pregnancy_status = PregnancyStatus.not_applicable
     renal_function_summary = RenalFunction.normal
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, urgency=True, suprapubic_pain=True
+        SymptomsFactory, dysuria=True, urgency=True, suprapubic_pain=True,
     )
     red_flags = factory.SubFactory(RedFlagsFactory)
     history = factory.SubFactory(HistoryFactory)
@@ -143,7 +143,7 @@ class RecurrentUTIPatientFactory(PatientStateFactory):
     pregnancy_status = PregnancyStatus.not_pregnant
     renal_function_summary = RenalFunction.normal  # Fix to avoid complication
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, urgency=True, frequency=True
+        SymptomsFactory, dysuria=True, urgency=True, frequency=True,
     )
     red_flags = factory.SubFactory(RedFlagsFactory)  # All False by default
     history = factory.SubFactory(HistoryFactory)  # All False by default
@@ -155,12 +155,12 @@ class ElderlyUTIPatientFactory(PatientStateFactory):
     sex = Sex.female
     pregnancy_status = PregnancyStatus.not_applicable
     renal_function_summary = RenalFunction.impaired
-    egfr_mL_min = 25.0
+    egfr_ml_min = 25.0
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, urgency=True, frequency=True
+        SymptomsFactory, dysuria=True, urgency=True, frequency=True,
     )
     history = factory.SubFactory(
-        HistoryFactory, meds=["lisinopril", "hydrochlorothiazide"], ACEI_ARB_use=True
+        HistoryFactory, meds=["lisinopril", "hydrochlorothiazide"], ACEI_ARB_use=True,
     )
 
 
@@ -169,10 +169,10 @@ class PatientWithAllergiesFactory(PatientStateFactory):
     sex = Sex.female
     pregnancy_status = PregnancyStatus.not_pregnant
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, frequency=True, suprapubic_pain=True
+        SymptomsFactory, dysuria=True, frequency=True, suprapubic_pain=True,
     )
     history = factory.SubFactory(
-        HistoryFactory, allergies=["nitrofurantoin", "trimethoprim"]
+        HistoryFactory, allergies=["nitrofurantoin", "trimethoprim"],
     )
 
 
@@ -210,7 +210,7 @@ class PregnantPatientFactory(PatientStateFactory):
     sex = Sex.female
     pregnancy_status = PregnancyStatus.pregnant
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, urgency=True, frequency=True
+        SymptomsFactory, dysuria=True, urgency=True, frequency=True,
     )
 
 
@@ -228,7 +228,7 @@ def create_patient_dict(patient: PatientState) -> dict[str, Any]:
         "sex": patient.sex.value,
         "pregnancy_status": patient.pregnancy_status.value,
         "renal_function_summary": patient.renal_function_summary.value,
-        "egfr_mL_min": patient.egfr_mL_min,
+        "egfr_ml_min": patient.egfr_ml_min,
         "symptoms": {
             "dysuria": patient.symptoms.dysuria,
             "urgency": patient.symptoms.urgency,

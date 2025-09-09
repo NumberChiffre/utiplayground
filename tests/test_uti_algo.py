@@ -287,7 +287,7 @@ class TestSelectTreatment:
 
     def test_nitrofurantoin_contraindicated_low_egfr(self):
         patient = ElderlyUTIPatientFactory()
-        patient.egfr_mL_min = 25.0  # < 30
+        patient.egfr_ml_min = 25.0  # < 30
 
         rec = select_treatment(patient)
         # Should select alternative (TMP/SMX in this case, but ACEI use contraindicated)
@@ -581,7 +581,7 @@ class TestStateValidator:
         assert result.severity == "high"
 
     def test_validator_nitrofurantoin_low_egfr(self):
-        patient = ElderlyUTIPatientFactory()  # Has egfr_mL_min = 25.0
+        patient = ElderlyUTIPatientFactory()  # Has egfr_ml_min = 25.0
         regimen_text = "nitrofurantoin 100 mg PO BID x 5 days"
         safety = {"approval_recommendation": "approve"}
 

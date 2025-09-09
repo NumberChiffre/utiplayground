@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 
 from .models import (
     PREGNANCY_EXCLUSIONS,
@@ -30,7 +30,7 @@ def assess_symptom_criteria(patient: PatientState) -> bool:
                 symptoms.frequency,
                 symptoms.suprapubic_pain,
                 symptoms.hematuria,
-            ]
+            ],
         )
         >= 2
     )
@@ -56,7 +56,7 @@ def check_complicating_factors(patient: PatientState) -> list[str]:
             red_flags.back_pain,
             red_flags.nausea_vomiting,
             red_flags.systemic,
-        ]
+        ],
     ):
         complications.append("systemic_or_upper_tract_symptoms")
 
@@ -77,7 +77,7 @@ def check_complicating_factors(patient: PatientState) -> list[str]:
                     patient.history.neurogenic_bladder,
                     patient.history.stones,
                     patient.renal_function_summary.value != "normal",
-                ]
+                ],
             ),
             "abnormal_urinary_tract_or_function",
         ),
@@ -121,7 +121,7 @@ def select_treatment(patient: PatientState) -> Recommendation | None:
         contraindications = {
             MedicationAgent.nitrofurantoin: [
                 "nitrofurantoin" in allergies,
-                patient.egfr_mL_min is not None and patient.egfr_mL_min < 30,
+                patient.egfr_ml_min is not None and patient.egfr_ml_min < 30,
             ],
             MedicationAgent.tmp_smx: [
                 bool(allergies & TMP_SMX_ALLERGY_TERMS),
@@ -165,7 +165,7 @@ def select_treatment(patient: PatientState) -> Recommendation | None:
 
 def _create_audit() -> dict:
     """Create standardized audit metadata"""
-    return {"timestamp": datetime.now().isoformat(), "algorithm_version": "mermaid_v1"}
+    return {"timestamp": datetime.now(UTC).isoformat(), "algorithm_version": "mermaid_v1"}
 
 
 def get_follow_up_plan() -> dict:
@@ -221,7 +221,7 @@ def assess_uti_patient(patient: PatientState) -> AssessmentOutput:
                 ],
                 eligibility_criteria_met=False,
                 criteria_not_met_reasons=[
-                    "Nonspecific symptoms requiring physician evaluation"
+                    "Nonspecific symptoms requiring physician evaluation",
                 ],
                 audit=_create_audit(),
             )
@@ -239,7 +239,7 @@ def assess_uti_patient(patient: PatientState) -> AssessmentOutput:
         )
 
     rationale.append(
-        "This patient meets the diagnostic criteria for acute uncomplicated cystitis based on their symptom presentation."
+        "This patient meets the diagnostic criteria for acute uncomplicated cystitis based on their symptom presentation.",
     )
 
     # Step 3: Check for complicating factors
@@ -270,7 +270,7 @@ def assess_uti_patient(patient: PatientState) -> AssessmentOutput:
         )
 
     rationale.append(
-        "No complicating factors were identified that would preclude pharmacist-initiated treatment."
+        "No complicating factors were identified that would preclude pharmacist-initiated treatment.",
     )
 
     # Step 4: Check for recurrence or relapse
@@ -298,7 +298,7 @@ def assess_uti_patient(patient: PatientState) -> AssessmentOutput:
         )
 
     rationale.append(
-        "No recurrence or relapse pattern was detected based on the patient's UTI history."
+        "No recurrence or relapse pattern was detected based on the patient's UTI history.",
     )
 
     # Step 5: Select treatment
@@ -316,7 +316,7 @@ def assess_uti_patient(patient: PatientState) -> AssessmentOutput:
         )
 
     rationale.append(
-        f"Based on the patient's clinical profile and the Ontario College of Pharmacists UTI algorithm, {recommendation.regimen} has been selected as the most appropriate first-line treatment option."
+        f"Based on the patient's clinical profile and the Ontario College of Pharmacists UTI algorithm, {recommendation.regimen} has been selected as the most appropriate first-line treatment option.",
     )
 
     # Step 6: Add follow-up plan for treatment decisions
@@ -343,7 +343,7 @@ def get_enhanced_follow_up_plan(patient: PatientState) -> dict:
     special_instructions = []
     if patient.age >= 65:
         special_instructions.append(
-            "Monitor elderly patients closely for adverse effects"
+            "Monitor elderly patients closely for adverse effects",
         )
     if patient.history.ACEI_ARB_use:
         special_instructions.append("Monitor for hyperkalemia if TMP/SMX prescribed")
@@ -371,7 +371,7 @@ def get_contraindications_from_assessment(assessment: AssessmentOutput) -> list[
 
 
 def state_validator(
-    patient: PatientState, regimen_text: str, safety: dict | None
+    patient: PatientState, regimen_text: str, safety: dict | None,
 ) -> ValidatorResult:
     """Validate patient state against UTI algorithm rules"""
 
@@ -453,8 +453,8 @@ def state_validator(
             ),
             ValidationRule(
                 condition=(
-                    patient.egfr_mL_min is not None
-                    and patient.egfr_mL_min < 30
+                    patient.egfr_ml_min is not None
+                    and patient.egfr_ml_min < 30
                     and "nitrofurantoin" in rt
                 ),
                 rule_name="avoid_nitrofurantoin_egfr_lt_30",

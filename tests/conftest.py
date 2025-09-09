@@ -6,8 +6,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-# from openai import AsyncOpenAI  # Will mock this in tests
-
 
 @pytest.fixture(scope="session")
 def event_loop():
