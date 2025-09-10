@@ -196,43 +196,56 @@ async def clinical_reasoning(
     age: Annotated[int, Field(description="Patient age in years.")],
     sex: Annotated[str, Field(description="Administrative sex for safety rules.")],
     pregnancy_status: Annotated[
-        str, Field(description="Pregnancy status at time of assessment."),
+        str,
+        Field(description="Pregnancy status at time of assessment."),
     ],
     renal_function_summary: Annotated[
-        str, Field(description="Clinically summarized renal function."),
+        str,
+        Field(description="Clinically summarized renal function."),
     ],
     symptoms_dysuria: Annotated[
-        bool, Field(description="Painful urination reported within current episode."),
+        bool,
+        Field(description="Painful urination reported within current episode."),
     ],
     symptoms_urgency: Annotated[
-        bool, Field(description="Sudden compelling need to urinate."),
+        bool,
+        Field(description="Sudden compelling need to urinate."),
     ],
     symptoms_frequency: Annotated[
-        bool, Field(description="Urination frequency above normal for patient."),
+        bool,
+        Field(description="Urination frequency above normal for patient."),
     ],
     symptoms_suprapubic_pain: Annotated[
-        bool, Field(description="Pain or discomfort in suprapubic area."),
+        bool,
+        Field(description="Pain or discomfort in suprapubic area."),
     ],
     symptoms_hematuria: Annotated[
-        bool, Field(description="Visible blood in urine or positive dipstick."),
+        bool,
+        Field(description="Visible blood in urine or positive dipstick."),
     ],
     red_flags_fever: Annotated[
-        bool, Field(description="Temperature ≥38°C within past 24-48h."),
+        bool,
+        Field(description="Temperature ≥38°C within past 24-48h."),
     ],
     red_flags_rigors: Annotated[
-        bool, Field(description="Shaking chills suggesting bacteremia."),
+        bool,
+        Field(description="Shaking chills suggesting bacteremia."),
     ],
     red_flags_flank_pain: Annotated[
-        bool, Field(description="Unilateral/bilateral flank or CVA tenderness."),
+        bool,
+        Field(description="Unilateral/bilateral flank or CVA tenderness."),
     ],
     red_flags_nausea_vomiting: Annotated[
-        bool, Field(description="Nausea and/or vomiting present."),
+        bool,
+        Field(description="Nausea and/or vomiting present."),
     ],
     red_flags_systemic: Annotated[
-        bool, Field(description="Signs of systemic illness or sepsis concern."),
+        bool,
+        Field(description="Signs of systemic illness or sepsis concern."),
     ],
     history_antibiotics_last_90d: Annotated[
-        bool, Field(description="Any systemic antibiotic exposure within last 90 days."),
+        bool,
+        Field(description="Any systemic antibiotic exposure within last 90 days."),
     ],
     history_acei_arb_use: Annotated[
         bool,
@@ -241,22 +254,28 @@ async def clinical_reasoning(
         ),
     ],
     history_catheter: Annotated[
-        bool, Field(description="Indwelling urinary catheter present."),
+        bool,
+        Field(description="Indwelling urinary catheter present."),
     ],
     history_stones: Annotated[
-        bool, Field(description="Known urinary tract stones history."),
+        bool,
+        Field(description="Known urinary tract stones history."),
     ],
     history_immunocompromised: Annotated[
-        bool, Field(description="Any condition or therapy causing immunosuppression."),
+        bool,
+        Field(description="Any condition or therapy causing immunosuppression."),
     ],
     recurrence_relapse_within_4w: Annotated[
-        bool, Field(description="Return of symptoms within 4 weeks post-therapy."),
+        bool,
+        Field(description="Return of symptoms within 4 weeks post-therapy."),
     ],
     recurrence_recurrent_6m: Annotated[
-        bool, Field(description="≥2 UTIs within 6 months."),
+        bool,
+        Field(description="≥2 UTIs within 6 months."),
     ],
     recurrence_recurrent_12m: Annotated[
-        bool, Field(description="≥3 UTIs within 12 months."),
+        bool,
+        Field(description="≥3 UTIs within 12 months."),
     ],
     locale_code: Annotated[
         str,
@@ -267,40 +286,44 @@ async def clinical_reasoning(
         ),
     ],
     history_allergies: Annotated[
-        list[str] | None, Field(description="All reported allergies (free-text)."),
+        list[str] | None,
+        Field(description="All reported allergies (free-text)."),
     ] = None,
     history_meds: Annotated[
-        list[str] | None, Field(description="Active medication list."),
+        list[str] | None,
+        Field(description="Active medication list."),
     ] = None,
     egfr_ml_min: Annotated[
         float | None,
         Field(description="Optional numeric eGFR in mL/min for renal checks."),
     ] = None,
-    symptoms_confusion: Annotated[
+    symptoms_confusion: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Confusion; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_delirium: Annotated[
+    symptoms_delirium: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Delirium; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_gross_hematuria: Annotated[
+    symptoms_gross_hematuria: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Gross hematuria; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    red_flags_back_pain: Annotated[
-        bool, Field(description="Back pain (modifier)."),
+    red_flags_back_pain: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Back pain (modifier)."),
     ] = False,
-    history_neurogenic_bladder: Annotated[
-        bool, Field(description="Neurogenic bladder or abnormal urinary function."),
+    history_neurogenic_bladder: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Neurogenic bladder or abnormal urinary function."),
     ] = False,
-    asymptomatic_bacteriuria: Annotated[
+    asymptomatic_bacteriuria: Annotated[  # noqa: FBT002
         bool,
         Field(description="Asymptomatic bacteriuria; no antibiotics per algorithm."),
     ] = False,
@@ -358,7 +381,7 @@ async def clinical_reasoning(
         "Screen a proposed clinical decision and regimen for patient-specific safety risks. "
         "Accepts flattened patient context plus: decision (e.g., 'recommend_treatment') and optional regimen parts "
         "(regimen, dose, frequency, duration, alternatives, contraindications, monitoring). "
-        "Returns contraindications, drug–drug interactions, monitoring requirements, an overall risk level, and an approval recommendation "
+        "Returns contraindications, drug-drug interactions, monitoring requirements, an overall risk level, and an approval recommendation "
         "(approve/modify/reject), with concise rationale and citations when available. "
         "Response is a JSON string for downstream gating or UI display."
     ),
@@ -376,43 +399,56 @@ async def safety_validation(
     age: Annotated[int, Field(description="Patient age in years.")],
     sex: Annotated[str, Field(description="Administrative sex for safety rules.")],
     pregnancy_status: Annotated[
-        str, Field(description="Pregnancy status at time of assessment."),
+        str,
+        Field(description="Pregnancy status at time of assessment."),
     ],
     renal_function_summary: Annotated[
-        str, Field(description="Clinically summarized renal function."),
+        str,
+        Field(description="Clinically summarized renal function."),
     ],
     symptoms_dysuria: Annotated[
-        bool, Field(description="Painful urination reported within current episode."),
+        bool,
+        Field(description="Painful urination reported within current episode."),
     ],
     symptoms_urgency: Annotated[
-        bool, Field(description="Sudden compelling need to urinate."),
+        bool,
+        Field(description="Sudden compelling need to urinate."),
     ],
     symptoms_frequency: Annotated[
-        bool, Field(description="Urination frequency above normal for patient."),
+        bool,
+        Field(description="Urination frequency above normal for patient."),
     ],
     symptoms_suprapubic_pain: Annotated[
-        bool, Field(description="Pain or discomfort in suprapubic area."),
+        bool,
+        Field(description="Pain or discomfort in suprapubic area."),
     ],
     symptoms_hematuria: Annotated[
-        bool, Field(description="Visible blood in urine or positive dipstick."),
+        bool,
+        Field(description="Visible blood in urine or positive dipstick."),
     ],
     red_flags_fever: Annotated[
-        bool, Field(description="Temperature ≥38°C within past 24-48h."),
+        bool,
+        Field(description="Temperature ≥38°C within past 24-48h."),
     ],
     red_flags_rigors: Annotated[
-        bool, Field(description="Shaking chills suggesting bacteremia."),
+        bool,
+        Field(description="Shaking chills suggesting bacteremia."),
     ],
     red_flags_flank_pain: Annotated[
-        bool, Field(description="Unilateral/bilateral flank or CVA tenderness."),
+        bool,
+        Field(description="Unilateral/bilateral flank or CVA tenderness."),
     ],
     red_flags_nausea_vomiting: Annotated[
-        bool, Field(description="Nausea and/or vomiting present."),
+        bool,
+        Field(description="Nausea and/or vomiting present."),
     ],
     red_flags_systemic: Annotated[
-        bool, Field(description="Signs of systemic illness or sepsis concern."),
+        bool,
+        Field(description="Signs of systemic illness or sepsis concern."),
     ],
     history_antibiotics_last_90d: Annotated[
-        bool, Field(description="Any systemic antibiotic exposure within last 90 days."),
+        bool,
+        Field(description="Any systemic antibiotic exposure within last 90 days."),
     ],
     history_acei_arb_use: Annotated[
         bool,
@@ -421,22 +457,28 @@ async def safety_validation(
         ),
     ],
     history_catheter: Annotated[
-        bool, Field(description="Indwelling urinary catheter present."),
+        bool,
+        Field(description="Indwelling urinary catheter present."),
     ],
     history_stones: Annotated[
-        bool, Field(description="Known urinary tract stones history."),
+        bool,
+        Field(description="Known urinary tract stones history."),
     ],
     history_immunocompromised: Annotated[
-        bool, Field(description="Any condition or therapy causing immunosuppression."),
+        bool,
+        Field(description="Any condition or therapy causing immunosuppression."),
     ],
     recurrence_relapse_within_4w: Annotated[
-        bool, Field(description="Return of symptoms within 4 weeks post-therapy."),
+        bool,
+        Field(description="Return of symptoms within 4 weeks post-therapy."),
     ],
     recurrence_recurrent_6m: Annotated[
-        bool, Field(description="≥2 UTIs within 6 months."),
+        bool,
+        Field(description="≥2 UTIs within 6 months."),
     ],
     recurrence_recurrent_12m: Annotated[
-        bool, Field(description="≥3 UTIs within 12 months."),
+        bool,
+        Field(description="≥3 UTIs within 12 months."),
     ],
     locale_code: Annotated[
         str,
@@ -453,62 +495,72 @@ async def safety_validation(
         ),
     ],
     history_allergies: Annotated[
-        list[str] | None, Field(description="All reported allergies (free-text)."),
+        list[str] | None,
+        Field(description="All reported allergies (free-text)."),
     ] = None,
     history_meds: Annotated[
-        list[str] | None, Field(description="Active medication list."),
+        list[str] | None,
+        Field(description="Active medication list."),
     ] = None,
     recommendation_regimen: Annotated[
         str | None,
         Field(description="Chosen agent name (e.g., 'Nitrofurantoin macrocrystals')."),
     ] = None,
     recommendation_dose: Annotated[
-        str | None, Field(description="Dose string (e.g., '100 mg')."),
+        str | None,
+        Field(description="Dose string (e.g., '100 mg')."),
     ] = None,
     recommendation_frequency: Annotated[
-        str | None, Field(description="Dosing frequency (e.g., 'PO BID')."),
+        str | None,
+        Field(description="Dosing frequency (e.g., 'PO BID')."),
     ] = None,
     recommendation_duration: Annotated[
-        str | None, Field(description="Course length (e.g., '5 days')."),
+        str | None,
+        Field(description="Course length (e.g., '5 days')."),
     ] = None,
     recommendation_alternatives: Annotated[
-        list[str] | None, Field(description="Acceptable alternative regimens."),
+        list[str] | None,
+        Field(description="Acceptable alternative regimens."),
     ] = None,
     recommendation_contraindications: Annotated[
-        list[str] | None, Field(description="Notable reasons to avoid certain agents."),
+        list[str] | None,
+        Field(description="Notable reasons to avoid certain agents."),
     ] = None,
     recommendation_monitoring: Annotated[
-        list[str] | None, Field(description="Monitoring and counseling bullets."),
+        list[str] | None,
+        Field(description="Monitoring and counseling bullets."),
     ] = None,
     egfr_ml_min: Annotated[
         float | None,
         Field(description="Optional numeric eGFR in mL/min for renal checks."),
     ] = None,
-    symptoms_confusion: Annotated[
+    symptoms_confusion: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Confusion; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_delirium: Annotated[
+    symptoms_delirium: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Delirium; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_gross_hematuria: Annotated[
+    symptoms_gross_hematuria: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Gross hematuria; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    red_flags_back_pain: Annotated[
-        bool, Field(description="Back pain (modifier)."),
+    red_flags_back_pain: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Back pain (modifier)."),
     ] = False,
-    history_neurogenic_bladder: Annotated[
-        bool, Field(description="Neurogenic bladder or abnormal urinary function."),
+    history_neurogenic_bladder: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Neurogenic bladder or abnormal urinary function."),
     ] = False,
-    asymptomatic_bacteriuria: Annotated[
+    asymptomatic_bacteriuria: Annotated[  # noqa: FBT002
         bool,
         Field(description="Asymptomatic bacteriuria; no antibiotics per algorithm."),
     ] = False,
@@ -591,43 +643,56 @@ async def prescribing_considerations(
     age: Annotated[int, Field(description="Patient age in years.")],
     sex: Annotated[str, Field(description="Administrative sex for safety rules.")],
     pregnancy_status: Annotated[
-        str, Field(description="Pregnancy status at time of assessment."),
+        str,
+        Field(description="Pregnancy status at time of assessment."),
     ],
     renal_function_summary: Annotated[
-        str, Field(description="Clinically summarized renal function."),
+        str,
+        Field(description="Clinically summarized renal function."),
     ],
     symptoms_dysuria: Annotated[
-        bool, Field(description="Painful urination reported within current episode."),
+        bool,
+        Field(description="Painful urination reported within current episode."),
     ],
     symptoms_urgency: Annotated[
-        bool, Field(description="Sudden compelling need to urinate."),
+        bool,
+        Field(description="Sudden compelling need to urinate."),
     ],
     symptoms_frequency: Annotated[
-        bool, Field(description="Urination frequency above normal for patient."),
+        bool,
+        Field(description="Urination frequency above normal for patient."),
     ],
     symptoms_suprapubic_pain: Annotated[
-        bool, Field(description="Pain or discomfort in suprapubic area."),
+        bool,
+        Field(description="Pain or discomfort in suprapubic area."),
     ],
     symptoms_hematuria: Annotated[
-        bool, Field(description="Visible blood in urine or positive dipstick."),
+        bool,
+        Field(description="Visible blood in urine or positive dipstick."),
     ],
     red_flags_fever: Annotated[
-        bool, Field(description="Temperature ≥38°C within past 24-48h."),
+        bool,
+        Field(description="Temperature ≥38°C within past 24-48h."),
     ],
     red_flags_rigors: Annotated[
-        bool, Field(description="Shaking chills suggesting bacteremia."),
+        bool,
+        Field(description="Shaking chills suggesting bacteremia."),
     ],
     red_flags_flank_pain: Annotated[
-        bool, Field(description="Unilateral/bilateral flank or CVA tenderness."),
+        bool,
+        Field(description="Unilateral/bilateral flank or CVA tenderness."),
     ],
     red_flags_nausea_vomiting: Annotated[
-        bool, Field(description="Nausea and/or vomiting present."),
+        bool,
+        Field(description="Nausea and/or vomiting present."),
     ],
     red_flags_systemic: Annotated[
-        bool, Field(description="Signs of systemic illness or sepsis concern."),
+        bool,
+        Field(description="Signs of systemic illness or sepsis concern."),
     ],
     history_antibiotics_last_90d: Annotated[
-        bool, Field(description="Any systemic antibiotic exposure within last 90 days."),
+        bool,
+        Field(description="Any systemic antibiotic exposure within last 90 days."),
     ],
     history_acei_arb_use: Annotated[
         bool,
@@ -636,22 +701,28 @@ async def prescribing_considerations(
         ),
     ],
     history_catheter: Annotated[
-        bool, Field(description="Indwelling urinary catheter present."),
+        bool,
+        Field(description="Indwelling urinary catheter present."),
     ],
     history_stones: Annotated[
-        bool, Field(description="Known urinary tract stones history."),
+        bool,
+        Field(description="Known urinary tract stones history."),
     ],
     history_immunocompromised: Annotated[
-        bool, Field(description="Any condition or therapy causing immunosuppression."),
+        bool,
+        Field(description="Any condition or therapy causing immunosuppression."),
     ],
     recurrence_relapse_within_4w: Annotated[
-        bool, Field(description="Return of symptoms within 4 weeks post-therapy."),
+        bool,
+        Field(description="Return of symptoms within 4 weeks post-therapy."),
     ],
     recurrence_recurrent_6m: Annotated[
-        bool, Field(description="≥2 UTIs within 6 months."),
+        bool,
+        Field(description="≥2 UTIs within 6 months."),
     ],
     recurrence_recurrent_12m: Annotated[
-        bool, Field(description="≥3 UTIs within 12 months."),
+        bool,
+        Field(description="≥3 UTIs within 12 months."),
     ],
     locale_code: Annotated[
         str,
@@ -662,43 +733,48 @@ async def prescribing_considerations(
         ),
     ],
     region: Annotated[
-        str, Field(description="Region code for resistance context (e.g., 'CA-ON')."),
+        str,
+        Field(description="Region code for resistance context (e.g., 'CA-ON')."),
     ],
     history_allergies: Annotated[
-        list[str] | None, Field(description="All reported allergies (free-text)."),
+        list[str] | None,
+        Field(description="All reported allergies (free-text)."),
     ] = None,
     history_meds: Annotated[
-        list[str] | None, Field(description="Active medication list."),
+        list[str] | None,
+        Field(description="Active medication list."),
     ] = None,
     egfr_ml_min: Annotated[
         float | None,
         Field(description="Optional numeric eGFR in mL/min for renal checks."),
     ] = None,
-    symptoms_confusion: Annotated[
+    symptoms_confusion: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Confusion; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_delirium: Annotated[
+    symptoms_delirium: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Delirium; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_gross_hematuria: Annotated[
+    symptoms_gross_hematuria: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Gross hematuria; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    red_flags_back_pain: Annotated[
-        bool, Field(description="Back pain (modifier)."),
+    red_flags_back_pain: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Back pain (modifier)."),
     ] = False,
-    history_neurogenic_bladder: Annotated[
-        bool, Field(description="Neurogenic bladder or abnormal urinary function."),
+    history_neurogenic_bladder: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Neurogenic bladder or abnormal urinary function."),
     ] = False,
-    asymptomatic_bacteriuria: Annotated[
+    asymptomatic_bacteriuria: Annotated[  # noqa: FBT002
         bool,
         Field(description="Asymptomatic bacteriuria; no antibiotics per algorithm."),
     ] = False,
@@ -771,7 +847,8 @@ async def prescribing_considerations(
 )
 async def research_summary(
     query: Annotated[
-        str, Field(description="Focused clinical question for evidence lookup."),
+        str,
+        Field(description="Focused clinical question for evidence lookup."),
     ],
     region: Annotated[
         str,
@@ -825,43 +902,56 @@ async def deep_research_diagnosis(
     age: Annotated[int, Field(description="Patient age in years.")],
     sex: Annotated[str, Field(description="Administrative sex for safety rules.")],
     pregnancy_status: Annotated[
-        str, Field(description="Pregnancy status at time of assessment."),
+        str,
+        Field(description="Pregnancy status at time of assessment."),
     ],
     renal_function_summary: Annotated[
-        str, Field(description="Clinically summarized renal function."),
+        str,
+        Field(description="Clinically summarized renal function."),
     ],
     symptoms_dysuria: Annotated[
-        bool, Field(description="Painful urination reported within current episode."),
+        bool,
+        Field(description="Painful urination reported within current episode."),
     ],
     symptoms_urgency: Annotated[
-        bool, Field(description="Sudden compelling need to urinate."),
+        bool,
+        Field(description="Sudden compelling need to urinate."),
     ],
     symptoms_frequency: Annotated[
-        bool, Field(description="Urination frequency above normal for patient."),
+        bool,
+        Field(description="Urination frequency above normal for patient."),
     ],
     symptoms_suprapubic_pain: Annotated[
-        bool, Field(description="Pain or discomfort in suprapubic area."),
+        bool,
+        Field(description="Pain or discomfort in suprapubic area."),
     ],
     symptoms_hematuria: Annotated[
-        bool, Field(description="Visible blood in urine or positive dipstick."),
+        bool,
+        Field(description="Visible blood in urine or positive dipstick."),
     ],
     red_flags_fever: Annotated[
-        bool, Field(description="Temperature ≥38°C within past 24-48h."),
+        bool,
+        Field(description="Temperature ≥38°C within past 24-48h."),
     ],
     red_flags_rigors: Annotated[
-        bool, Field(description="Shaking chills suggesting bacteremia."),
+        bool,
+        Field(description="Shaking chills suggesting bacteremia."),
     ],
     red_flags_flank_pain: Annotated[
-        bool, Field(description="Unilateral/bilateral flank or CVA tenderness."),
+        bool,
+        Field(description="Unilateral/bilateral flank or CVA tenderness."),
     ],
     red_flags_nausea_vomiting: Annotated[
-        bool, Field(description="Nausea and/or vomiting present."),
+        bool,
+        Field(description="Nausea and/or vomiting present."),
     ],
     red_flags_systemic: Annotated[
-        bool, Field(description="Signs of systemic illness or sepsis concern."),
+        bool,
+        Field(description="Signs of systemic illness or sepsis concern."),
     ],
     history_antibiotics_last_90d: Annotated[
-        bool, Field(description="Any systemic antibiotic exposure within last 90 days."),
+        bool,
+        Field(description="Any systemic antibiotic exposure within last 90 days."),
     ],
     history_acei_arb_use: Annotated[
         bool,
@@ -870,22 +960,28 @@ async def deep_research_diagnosis(
         ),
     ],
     history_catheter: Annotated[
-        bool, Field(description="Indwelling urinary catheter present."),
+        bool,
+        Field(description="Indwelling urinary catheter present."),
     ],
     history_stones: Annotated[
-        bool, Field(description="Known urinary tract stones history."),
+        bool,
+        Field(description="Known urinary tract stones history."),
     ],
     history_immunocompromised: Annotated[
-        bool, Field(description="Any condition or therapy causing immunosuppression."),
+        bool,
+        Field(description="Any condition or therapy causing immunosuppression."),
     ],
     recurrence_relapse_within_4w: Annotated[
-        bool, Field(description="Return of symptoms within 4 weeks post-therapy."),
+        bool,
+        Field(description="Return of symptoms within 4 weeks post-therapy."),
     ],
     recurrence_recurrent_6m: Annotated[
-        bool, Field(description="≥2 UTIs within 6 months."),
+        bool,
+        Field(description="≥2 UTIs within 6 months."),
     ],
     recurrence_recurrent_12m: Annotated[
-        bool, Field(description="≥3 UTIs within 12 months."),
+        bool,
+        Field(description="≥3 UTIs within 12 months."),
     ],
     locale_code: Annotated[
         str,
@@ -896,40 +992,44 @@ async def deep_research_diagnosis(
         ),
     ],
     history_allergies: Annotated[
-        list[str] | None, Field(description="All reported allergies (free-text)."),
+        list[str] | None,
+        Field(description="All reported allergies (free-text)."),
     ] = None,
     history_meds: Annotated[
-        list[str] | None, Field(description="Active medication list."),
+        list[str] | None,
+        Field(description="Active medication list."),
     ] = None,
     egfr_ml_min: Annotated[
         float | None,
         Field(description="Optional numeric eGFR in mL/min for renal checks."),
     ] = None,
-    symptoms_confusion: Annotated[
+    symptoms_confusion: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Confusion; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_delirium: Annotated[
+    symptoms_delirium: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Delirium; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_gross_hematuria: Annotated[
+    symptoms_gross_hematuria: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Gross hematuria; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    red_flags_back_pain: Annotated[
-        bool, Field(description="Back pain (modifier)."),
+    red_flags_back_pain: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Back pain (modifier)."),
     ] = False,
-    history_neurogenic_bladder: Annotated[
-        bool, Field(description="Neurogenic bladder or abnormal urinary function."),
+    history_neurogenic_bladder: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Neurogenic bladder or abnormal urinary function."),
     ] = False,
-    asymptomatic_bacteriuria: Annotated[
+    asymptomatic_bacteriuria: Annotated[  # noqa: FBT002
         bool,
         Field(description="Asymptomatic bacteriuria; no antibiotics per algorithm."),
     ] = False,
@@ -1014,10 +1114,12 @@ async def uti_complete_patient_assessment(
     age: Annotated[int, Field(description="Patient age in years.")],
     sex: Annotated[str, Field(description="Administrative sex for safety rules.")],
     pregnancy_status: Annotated[
-        str, Field(description="Pregnancy status at time of assessment."),
+        str,
+        Field(description="Pregnancy status at time of assessment."),
     ],
     renal_function_summary: Annotated[
-        str, Field(description="Clinically summarized renal function."),
+        str,
+        Field(description="Clinically summarized renal function."),
     ],
     locale_code: Annotated[
         str,
@@ -1028,37 +1130,48 @@ async def uti_complete_patient_assessment(
         ),
     ],
     symptoms_dysuria: Annotated[
-        bool, Field(description="Painful urination reported within current episode."),
+        bool,
+        Field(description="Painful urination reported within current episode."),
     ],
     symptoms_urgency: Annotated[
-        bool, Field(description="Sudden compelling need to urinate."),
+        bool,
+        Field(description="Sudden compelling need to urinate."),
     ],
     symptoms_frequency: Annotated[
-        bool, Field(description="Urination frequency above normal for patient."),
+        bool,
+        Field(description="Urination frequency above normal for patient."),
     ],
     symptoms_suprapubic_pain: Annotated[
-        bool, Field(description="Pain or discomfort in suprapubic area."),
+        bool,
+        Field(description="Pain or discomfort in suprapubic area."),
     ],
     symptoms_hematuria: Annotated[
-        bool, Field(description="Visible blood in urine or positive dipstick."),
+        bool,
+        Field(description="Visible blood in urine or positive dipstick."),
     ],
     red_flags_fever: Annotated[
-        bool, Field(description="Temperature ≥38°C within past 24-48h."),
+        bool,
+        Field(description="Temperature ≥38°C within past 24-48h."),
     ],
     red_flags_rigors: Annotated[
-        bool, Field(description="Shaking chills suggesting bacteremia."),
+        bool,
+        Field(description="Shaking chills suggesting bacteremia."),
     ],
     red_flags_flank_pain: Annotated[
-        bool, Field(description="Unilateral/bilateral flank or CVA tenderness."),
+        bool,
+        Field(description="Unilateral/bilateral flank or CVA tenderness."),
     ],
     red_flags_nausea_vomiting: Annotated[
-        bool, Field(description="Nausea and/or vomiting present."),
+        bool,
+        Field(description="Nausea and/or vomiting present."),
     ],
     red_flags_systemic: Annotated[
-        bool, Field(description="Signs of systemic illness or sepsis concern."),
+        bool,
+        Field(description="Signs of systemic illness or sepsis concern."),
     ],
     history_antibiotics_last_90d: Annotated[
-        bool, Field(description="Any systemic antibiotic exposure within last 90 days."),
+        bool,
+        Field(description="Any systemic antibiotic exposure within last 90 days."),
     ],
     history_acei_arb_use: Annotated[
         bool,
@@ -1067,60 +1180,70 @@ async def uti_complete_patient_assessment(
         ),
     ],
     history_catheter: Annotated[
-        bool, Field(description="Indwelling urinary catheter present."),
+        bool,
+        Field(description="Indwelling urinary catheter present."),
     ],
     history_stones: Annotated[
-        bool, Field(description="Known urinary tract stones history."),
+        bool,
+        Field(description="Known urinary tract stones history."),
     ],
     history_immunocompromised: Annotated[
-        bool, Field(description="Any condition or therapy causing immunosuppression."),
+        bool,
+        Field(description="Any condition or therapy causing immunosuppression."),
     ],
     recurrence_relapse_within_4w: Annotated[
-        bool, Field(description="Return of symptoms within 4 weeks post-therapy."),
+        bool,
+        Field(description="Return of symptoms within 4 weeks post-therapy."),
     ],
     recurrence_recurrent_6m: Annotated[
-        bool, Field(description="≥2 UTIs within 6 months."),
+        bool,
+        Field(description="≥2 UTIs within 6 months."),
     ],
     recurrence_recurrent_12m: Annotated[
-        bool, Field(description="≥3 UTIs within 12 months."),
+        bool,
+        Field(description="≥3 UTIs within 12 months."),
     ],
     egfr_ml_min: Annotated[
         float | None,
         Field(description="Optional numeric eGFR in mL/min for renal checks."),
     ] = None,
-    symptoms_confusion: Annotated[
+    symptoms_confusion: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Confusion; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_delirium: Annotated[
+    symptoms_delirium: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Delirium; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_gross_hematuria: Annotated[
+    symptoms_gross_hematuria: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Gross hematuria; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    red_flags_back_pain: Annotated[
-        bool, Field(description="Back pain (modifier)."),
+    red_flags_back_pain: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Back pain (modifier)."),
     ] = False,
-    history_neurogenic_bladder: Annotated[
-        bool, Field(description="Neurogenic bladder or abnormal urinary function."),
+    history_neurogenic_bladder: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Neurogenic bladder or abnormal urinary function."),
     ] = False,
-    asymptomatic_bacteriuria: Annotated[
+    asymptomatic_bacteriuria: Annotated[  # noqa: FBT002
         bool,
         Field(description="Asymptomatic bacteriuria; no antibiotics per algorithm."),
     ] = False,
     history_allergies: Annotated[
-        list[str] | None, Field(description="All reported allergies (free-text)."),
+        list[str] | None,
+        Field(description="All reported allergies (free-text)."),
     ] = None,
     history_meds: Annotated[
-        list[str] | None, Field(description="Active medication list."),
+        list[str] | None,
+        Field(description="Active medication list."),
     ] = None,
     model: Annotated[
         str,
@@ -1194,10 +1317,12 @@ async def assess_and_plan(
     age: Annotated[int, Field(description="Patient age in years.")],
     sex: Annotated[str, Field(description="Administrative sex for safety rules.")],
     pregnancy_status: Annotated[
-        str, Field(description="Pregnancy status at time of assessment."),
+        str,
+        Field(description="Pregnancy status at time of assessment."),
     ],
     renal_function_summary: Annotated[
-        str, Field(description="Clinically summarized renal function."),
+        str,
+        Field(description="Clinically summarized renal function."),
     ],
     locale_code: Annotated[
         str,
@@ -1208,37 +1333,48 @@ async def assess_and_plan(
         ),
     ],
     symptoms_dysuria: Annotated[
-        bool, Field(description="Painful urination reported within current episode."),
+        bool,
+        Field(description="Painful urination reported within current episode."),
     ],
     symptoms_urgency: Annotated[
-        bool, Field(description="Sudden compelling need to urinate."),
+        bool,
+        Field(description="Sudden compelling need to urinate."),
     ],
     symptoms_frequency: Annotated[
-        bool, Field(description="Urination frequency above normal for patient."),
+        bool,
+        Field(description="Urination frequency above normal for patient."),
     ],
     symptoms_suprapubic_pain: Annotated[
-        bool, Field(description="Pain or discomfort in suprapubic area."),
+        bool,
+        Field(description="Pain or discomfort in suprapubic area."),
     ],
     symptoms_hematuria: Annotated[
-        bool, Field(description="Visible blood in urine or positive dipstick."),
+        bool,
+        Field(description="Visible blood in urine or positive dipstick."),
     ],
     red_flags_fever: Annotated[
-        bool, Field(description="Temperature ≥38°C within past 24-48h."),
+        bool,
+        Field(description="Temperature ≥38°C within past 24-48h."),
     ],
     red_flags_rigors: Annotated[
-        bool, Field(description="Shaking chills suggesting bacteremia."),
+        bool,
+        Field(description="Shaking chills suggesting bacteremia."),
     ],
     red_flags_flank_pain: Annotated[
-        bool, Field(description="Unilateral/bilateral flank or CVA tenderness."),
+        bool,
+        Field(description="Unilateral/bilateral flank or CVA tenderness."),
     ],
     red_flags_nausea_vomiting: Annotated[
-        bool, Field(description="Nausea and/or vomiting present."),
+        bool,
+        Field(description="Nausea and/or vomiting present."),
     ],
     red_flags_systemic: Annotated[
-        bool, Field(description="Signs of systemic illness or sepsis concern."),
+        bool,
+        Field(description="Signs of systemic illness or sepsis concern."),
     ],
     history_antibiotics_last_90d: Annotated[
-        bool, Field(description="Any systemic antibiotic exposure within last 90 days."),
+        bool,
+        Field(description="Any systemic antibiotic exposure within last 90 days."),
     ],
     history_acei_arb_use: Annotated[
         bool,
@@ -1247,52 +1383,60 @@ async def assess_and_plan(
         ),
     ],
     history_catheter: Annotated[
-        bool, Field(description="Indwelling urinary catheter present."),
+        bool,
+        Field(description="Indwelling urinary catheter present."),
     ],
     history_stones: Annotated[
-        bool, Field(description="Known urinary tract stones history."),
+        bool,
+        Field(description="Known urinary tract stones history."),
     ],
     history_immunocompromised: Annotated[
-        bool, Field(description="Any condition or therapy causing immunosuppression."),
+        bool,
+        Field(description="Any condition or therapy causing immunosuppression."),
     ],
     recurrence_relapse_within_4w: Annotated[
-        bool, Field(description="Return of symptoms within 4 weeks post-therapy."),
+        bool,
+        Field(description="Return of symptoms within 4 weeks post-therapy."),
     ],
     recurrence_recurrent_6m: Annotated[
-        bool, Field(description="≥2 UTIs within 6 months."),
+        bool,
+        Field(description="≥2 UTIs within 6 months."),
     ],
     recurrence_recurrent_12m: Annotated[
-        bool, Field(description="≥3 UTIs within 12 months."),
+        bool,
+        Field(description="≥3 UTIs within 12 months."),
     ],
     egfr_ml_min: Annotated[
         float | None,
         Field(description="Optional numeric eGFR in mL/min for renal checks."),
     ] = None,
-    symptoms_confusion: Annotated[
+    symptoms_confusion: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Confusion; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_delirium: Annotated[
+    symptoms_delirium: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Delirium; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    symptoms_gross_hematuria: Annotated[
+    symptoms_gross_hematuria: Annotated[  # noqa: FBT002
         bool,
         Field(
             description="Gross hematuria; nonspecific symptom for referral when criteria not met.",
         ),
     ] = False,
-    red_flags_back_pain: Annotated[
-        bool, Field(description="Back pain (modifier)."),
+    red_flags_back_pain: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Back pain (modifier)."),
     ] = False,
-    history_neurogenic_bladder: Annotated[
-        bool, Field(description="Neurogenic bladder or abnormal urinary function."),
+    history_neurogenic_bladder: Annotated[  # noqa: FBT002
+        bool,
+        Field(description="Neurogenic bladder or abnormal urinary function."),
     ] = False,
-    asymptomatic_bacteriuria: Annotated[
+    asymptomatic_bacteriuria: Annotated[  # noqa: FBT002
         bool,
         Field(description="Asymptomatic bacteriuria; no antibiotics per algorithm."),
     ] = False,
@@ -1369,10 +1513,12 @@ async def follow_up_plan(
     age: Annotated[int, Field(description="Patient age in years.")],
     sex: Annotated[str, Field(description="Administrative sex for safety rules.")],
     pregnancy_status: Annotated[
-        str, Field(description="Pregnancy status at time of assessment."),
+        str,
+        Field(description="Pregnancy status at time of assessment."),
     ],
     renal_function_summary: Annotated[
-        str, Field(description="Clinically summarized renal function."),
+        str,
+        Field(description="Clinically summarized renal function."),
     ],
     locale_code: Annotated[
         str,
@@ -1383,37 +1529,48 @@ async def follow_up_plan(
         ),
     ],
     symptoms_dysuria: Annotated[
-        bool, Field(description="Painful urination reported within current episode."),
+        bool,
+        Field(description="Painful urination reported within current episode."),
     ],
     symptoms_urgency: Annotated[
-        bool, Field(description="Sudden compelling need to urinate."),
+        bool,
+        Field(description="Sudden compelling need to urinate."),
     ],
     symptoms_frequency: Annotated[
-        bool, Field(description="Urination frequency above normal for patient."),
+        bool,
+        Field(description="Urination frequency above normal for patient."),
     ],
     symptoms_suprapubic_pain: Annotated[
-        bool, Field(description="Pain or discomfort in suprapubic area."),
+        bool,
+        Field(description="Pain or discomfort in suprapubic area."),
     ],
     symptoms_hematuria: Annotated[
-        bool, Field(description="Visible blood in urine or positive dipstick."),
+        bool,
+        Field(description="Visible blood in urine or positive dipstick."),
     ],
     red_flags_fever: Annotated[
-        bool, Field(description="Temperature ≥38°C within past 24-48h."),
+        bool,
+        Field(description="Temperature ≥38°C within past 24-48h."),
     ],
     red_flags_rigors: Annotated[
-        bool, Field(description="Shaking chills suggesting bacteremia."),
+        bool,
+        Field(description="Shaking chills suggesting bacteremia."),
     ],
     red_flags_flank_pain: Annotated[
-        bool, Field(description="Unilateral/bilateral flank or CVA tenderness."),
+        bool,
+        Field(description="Unilateral/bilateral flank or CVA tenderness."),
     ],
     red_flags_nausea_vomiting: Annotated[
-        bool, Field(description="Nausea and/or vomiting present."),
+        bool,
+        Field(description="Nausea and/or vomiting present."),
     ],
     red_flags_systemic: Annotated[
-        bool, Field(description="Signs of systemic illness or sepsis concern."),
+        bool,
+        Field(description="Signs of systemic illness or sepsis concern."),
     ],
     history_antibiotics_last_90d: Annotated[
-        bool, Field(description="Any systemic antibiotic exposure within last 90 days."),
+        bool,
+        Field(description="Any systemic antibiotic exposure within last 90 days."),
     ],
     history_acei_arb_use: Annotated[
         bool,
@@ -1422,22 +1579,28 @@ async def follow_up_plan(
         ),
     ],
     history_catheter: Annotated[
-        bool, Field(description="Indwelling urinary catheter present."),
+        bool,
+        Field(description="Indwelling urinary catheter present."),
     ],
     history_stones: Annotated[
-        bool, Field(description="Known urinary tract stones history."),
+        bool,
+        Field(description="Known urinary tract stones history."),
     ],
     history_immunocompromised: Annotated[
-        bool, Field(description="Any condition or therapy causing immunosuppression."),
+        bool,
+        Field(description="Any condition or therapy causing immunosuppression."),
     ],
     recurrence_relapse_within_4w: Annotated[
-        bool, Field(description="Return of symptoms within 4 weeks post-therapy."),
+        bool,
+        Field(description="Return of symptoms within 4 weeks post-therapy."),
     ],
     recurrence_recurrent_6m: Annotated[
-        bool, Field(description="≥2 UTIs within 6 months."),
+        bool,
+        Field(description="≥2 UTIs within 6 months."),
     ],
     recurrence_recurrent_12m: Annotated[
-        bool, Field(description="≥3 UTIs within 12 months."),
+        bool,
+        Field(description="≥3 UTIs within 12 months."),
     ],
 ) -> str:
     """Return the standardized 72-hour follow-up plan tailored to the patient.
@@ -1506,16 +1669,19 @@ async def ocr_extract_pdf(
         Field(description="Absolute or workspace-relative path to a PDF file."),
     ] = None,
     file_base64: Annotated[
-        str | None, Field(description="Base64-encoded PDF content."),
+        str | None,
+        Field(description="Base64-encoded PDF content."),
     ] = None,
-    ocr: Annotated[
+    ocr: Annotated[  # noqa: FBT002
         bool,
         Field(description="If true, OCR is attempted when little or no text is found."),
     ] = True,
 ) -> str:
     try:
         result = await _ocr_extract_pdf_impl(
-            file_path=file_path, file_base64=file_base64, force_ocr=ocr,
+            file_path=file_path,
+            file_base64=file_base64,
+            force_ocr=ocr,
         )
         return json.dumps(result)
     except Exception as e:
@@ -1523,8 +1689,11 @@ async def ocr_extract_pdf(
         return json.dumps({"error": "ocr_extract_pdf_failed", "details": str(e)})
 
 
-async def _ocr_extract_pdf_impl(
-    *, file_path: str | None, file_base64: str | None, force_ocr: bool,
+async def _ocr_extract_pdf_impl(  # noqa: C901, PLR0912, PLR0915
+    *,
+    file_path: str | None,
+    file_base64: str | None,
+    force_ocr: bool,
 ) -> dict:
     try:
         from pypdf import PdfReader  # Lazy import
@@ -1567,16 +1736,16 @@ async def _ocr_extract_pdf_impl(
         data_dir = str(Path(__file__).parent.parent / "data")
         data_path = Path(data_dir)
         if data_path.is_dir():
-            for file_path in data_path.iterdir():
-                if file_path.name.lower().endswith(".pdf"):
-                    paths_to_read.append(str(file_path))
+            for pdf_file in data_path.iterdir():
+                if pdf_file.name.lower().endswith(".pdf"):
+                    paths_to_read.append(str(pdf_file))
 
     for path in paths_to_read:
         try:
             if not Path(path).is_file():
                 results[path] = ""
                 continue
-            with Path(path).open("rb") as f:
+            with Path(path).open("rb") as f:  # noqa: ASYNC230
                 reader = PdfReader(f)
                 page_texts: list[str] = []
                 for page in reader.pages:
@@ -1588,7 +1757,7 @@ async def _ocr_extract_pdf_impl(
             combined = "\n".join(page_texts).strip()
             if (force_ocr and len(combined) < 16) or (not combined and force_ocr):
                 try:
-                    with Path(path).open("rb") as fb:
+                    with Path(path).open("rb") as fb:  # noqa: ASYNC230
                         pdf_bytes = fb.read()
                     ocr_text = await _ocr_pdf_bytes(pdf_bytes, warnings)
                     combined = ocr_text if ocr_text is not None else combined

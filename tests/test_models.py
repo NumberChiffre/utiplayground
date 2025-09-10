@@ -140,17 +140,20 @@ class TestMedicationSpec:
         )
 
         # Test that it's frozen (immutable)
-        with pytest.raises(Exception):  # dataclass frozen raises FrozenInstanceError
+        with pytest.raises(
+            Exception,  # noqa: PT011
+            match="",
+        ):  # dataclass frozen raises FrozenInstanceError
             spec.regimen = "Modified"
 
 
 class TestRecurrenceResult:
     def test_recurrence_result_creation(self):
-        result = RecurrenceResult(True, "Test reason")
+        result = RecurrenceResult(has_recurrence=True, reason="Test reason")
         assert result.has_recurrence is True
         assert result.reason == "Test reason"
 
-        result = RecurrenceResult(False, "")
+        result = RecurrenceResult(has_recurrence=False, reason="")
         assert result.has_recurrence is False
         assert result.reason == ""
 
@@ -246,7 +249,7 @@ class TestHistory:
     def test_history_basic_creation(self):
         history = History(
             antibiotics_last_90d=False,
-            ACEI_ARB_use=False,
+            acei_arb_use=False,
             catheter=False,
             stones=False,
             immunocompromised=False,
@@ -255,7 +258,7 @@ class TestHistory:
         assert history.antibiotics_last_90d is False
         assert history.allergies == []  # default
         assert history.meds == []  # default
-        assert history.ACEI_ARB_use is False
+        assert history.acei_arb_use is False
         assert history.catheter is False
         assert history.stones is False
         assert history.immunocompromised is False
@@ -267,7 +270,7 @@ class TestHistory:
             antibiotics_last_90d=False,
             allergies=["penicillin", "sulfa"],
             meds=["lisinopril", "ibuprofen", "spironolactone"],
-            ACEI_ARB_use=True,
+            acei_arb_use=True,
             catheter=False,
             stones=False,
             immunocompromised=False,
@@ -284,7 +287,7 @@ class TestHistory:
         history = History(
             antibiotics_last_90d=False,
             meds=["lisinopril", "enalapril", "ramipril"],
-            ACEI_ARB_use=False,
+            acei_arb_use=False,
             catheter=False,
             stones=False,
             immunocompromised=False,
@@ -296,7 +299,7 @@ class TestHistory:
         history = History(
             antibiotics_last_90d=False,
             meds=["losartan", "valsartan"],
-            ACEI_ARB_use=False,
+            acei_arb_use=False,
             catheter=False,
             stones=False,
             immunocompromised=False,
@@ -308,7 +311,7 @@ class TestHistory:
         history = History(
             antibiotics_last_90d=False,
             meds=["ibuprofen", "naproxen", "diclofenac"],
-            ACEI_ARB_use=False,
+            acei_arb_use=False,
             catheter=False,
             stones=False,
             immunocompromised=False,
@@ -320,7 +323,7 @@ class TestHistory:
         history = History(
             antibiotics_last_90d=False,
             meds=["spironolactone", "amiloride"],
-            ACEI_ARB_use=False,
+            acei_arb_use=False,
             catheter=False,
             stones=False,
             immunocompromised=False,
@@ -365,7 +368,7 @@ class TestPatientState:
             ),
             "history": History(
                 antibiotics_last_90d=False,
-                ACEI_ARB_use=False,
+                acei_arb_use=False,
                 catheter=False,
                 stones=False,
                 immunocompromised=False,

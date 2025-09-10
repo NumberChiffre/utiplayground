@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# ruff: noqa: SIM117
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -11,6 +12,7 @@ from src.models import (
     Decision,
     Recommendation,
     SafetyValidationOutput,
+    ValidatorResult,
 )
 from src.services import (
     _run_agent_stream_with_retry,
@@ -256,7 +258,9 @@ class TestWebResearch:
                 mock_stream.return_value = mock_streamed_output
 
                 result = await web_research(
-                    "UTI treatment guidelines", "CA-ON", model="gpt-4.1",
+                    "UTI treatment guidelines",
+                    "CA-ON",
+                    model="gpt-4.1",
                 )
 
                 assert (
@@ -314,7 +318,9 @@ class TestPrescribingConsiderations:
                     mock_web_research.return_value = mock_web_research_result
 
                     result = await prescribing_considerations(
-                        patient_data, "CA-ON", model="gpt-4.1",
+                        patient_data,
+                        "CA-ON",
+                        model="gpt-4.1",
                     )
 
                     assert "considerations" in result
@@ -382,7 +388,8 @@ class TestDeepResearchDiagnosis:
                     mock_stream.return_value = mock_streamed_output
 
                     result = await deep_research_diagnosis(
-                        patient_data, model="gpt-4.1",
+                        patient_data,
+                        model="gpt-4.1",
                     )
 
                     assert (
@@ -528,12 +535,18 @@ class TestFinalConsolidatedAgent:
                 return_value={"diagnosis": "UTI diagnosis"},
             ),
             follow_up_plan=AsyncMock(return_value={"follow_up_plan": {}}),
+            _run_agent_stream_with_retry=AsyncMock(return_value={}),  # Mock agent calls
         ):
             with patch("src.services.state_validator") as mock_validator:
-                mock_validator.return_value = {"passed": True, "severity": "low"}
+                mock_validator.return_value = ValidatorResult(
+                    passed=True,
+                    rules_fired=[],
+                    contradictions=[],
+                )
 
                 result = await uti_complete_patient_assessment(
-                    patient_data, model="gpt-4.1",
+                    patient_data,
+                    model="gpt-4.1",
                 )
 
                 assert result["orchestration"] == "final_consolidated"
@@ -570,12 +583,18 @@ class TestFinalConsolidatedAgent:
             deep_research_diagnosis=AsyncMock(
                 return_value={"diagnosis": "Complex UTI"},
             ),
+            _run_agent_stream_with_retry=AsyncMock(return_value={}),  # Mock agent calls
         ):
             with patch("src.services.state_validator") as mock_validator:
-                mock_validator.return_value = {"passed": True, "severity": "low"}
+                mock_validator.return_value = ValidatorResult(
+                    passed=True,
+                    rules_fired=[],
+                    contradictions=[],
+                )
 
                 result = await uti_complete_patient_assessment(
-                    patient_data, model="gpt-4.1",
+                    patient_data,
+                    model="gpt-4.1",
                 )
 
                 assert (
@@ -630,9 +649,14 @@ class TestFinalConsolidatedAgent:
             prescribing_considerations=AsyncMock(return_value={"considerations": []}),
             web_research=AsyncMock(return_value={"summary": ""}),
             deep_research_diagnosis=AsyncMock(return_value={"diagnosis": ""}),
+            _run_agent_stream_with_retry=AsyncMock(return_value={}),  # Mock agent calls
         ):
             with patch("src.services.state_validator") as mock_validator:
-                mock_validator.return_value = {"passed": False, "severity": "high"}
+                mock_validator.return_value = ValidatorResult(
+                    passed=False,
+                    rules_fired=["safety_risk"],
+                    contradictions=["high_risk"],
+                )
 
                 result = await uti_complete_patient_assessment(patient_data)
 

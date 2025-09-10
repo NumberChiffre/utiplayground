@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# ruff: noqa: SIM117
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -182,7 +183,8 @@ class TestUTIAssessmentWorkflow:
         # Male patients should be referred due to complexity
         assert assessment_result["decision"] == Decision.refer_complicated
         assert "male_patient" in assessment_result.get(
-            "triggered_complicating_factors", [],
+            "triggered_complicating_factors",
+            [],
         )
 
     @pytest.mark.asyncio
@@ -302,7 +304,8 @@ class TestFullConsolidatedWorkflow:
                     mock_safety_func.return_value = mock_safety.model_dump()
 
                     result = await uti_complete_patient_assessment(
-                        patient_data, model="gpt-4.1",
+                        patient_data,
+                        model="gpt-4.1",
                     )
 
                     # Verify consolidated result structure
@@ -378,7 +381,7 @@ class TestWorkflowErrorHandling:
                 "antibiotics_last_90d": False,
                 "allergies": [],
                 "meds": [],
-                "ACEI_ARB_use": False,
+                "acei_arb_use": False,
                 "catheter": False,
                 "stones": False,
                 "immunocompromised": False,

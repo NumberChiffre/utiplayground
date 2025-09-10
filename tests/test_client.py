@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# ruff: noqa: SIM117
 import os
 from unittest.mock import AsyncMock, patch
 
@@ -40,18 +41,20 @@ class TestEnsureOpenAIClient:
                         mock_openai.assert_called_once_with(timeout=300.0)
 
     def test_ensure_openai_client_no_api_key(self):
-        with patch("src.client._client", None):  # Reset global state
-            with patch.dict(os.environ, {}, clear=True):
-                result = ensure_openai_client()
-
-                assert result is False
+        with (
+            patch("src.client._client", None),  # Reset global state
+            patch.dict(os.environ, {}, clear=True),
+        ):
+            result = ensure_openai_client()
+            assert result is False
 
     def test_ensure_openai_client_empty_api_key(self):
-        with patch("src.client._client", None):  # Reset global state
-            with patch.dict(os.environ, {"OPENAI_API_KEY": ""}):
-                result = ensure_openai_client()
-
-                assert result is False
+        with (
+            patch("src.client._client", None),  # Reset global state
+            patch.dict(os.environ, {"OPENAI_API_KEY": ""}),
+        ):
+            result = ensure_openai_client()
+            assert result is False
 
     def test_ensure_openai_client_already_initialized(self):
         # Simulate already initialized client

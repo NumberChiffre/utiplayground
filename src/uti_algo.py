@@ -101,9 +101,9 @@ def check_recurrence_relapse(patient: PatientState) -> RecurrenceResult:
 
     for has_pattern, reason in recurrence_patterns:
         if has_pattern:
-            return RecurrenceResult(True, reason)
+            return RecurrenceResult(has_recurrence=True, reason=reason)
 
-    return RecurrenceResult(False, "")
+    return RecurrenceResult(has_recurrence=False, reason="")
 
 
 def select_treatment(patient: PatientState) -> Recommendation | None:
@@ -125,7 +125,7 @@ def select_treatment(patient: PatientState) -> Recommendation | None:
             ],
             MedicationAgent.tmp_smx: [
                 bool(allergies & TMP_SMX_ALLERGY_TERMS),
-                history.ACEI_ARB_use,
+                history.acei_arb_use,
             ],
             MedicationAgent.trimethoprim: [
                 "trimethoprim" in allergies,
@@ -165,7 +165,10 @@ def select_treatment(patient: PatientState) -> Recommendation | None:
 
 def _create_audit() -> dict:
     """Create standardized audit metadata"""
-    return {"timestamp": datetime.now(UTC).isoformat(), "algorithm_version": "mermaid_v1"}
+    return {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "algorithm_version": "mermaid_v1",
+    }
 
 
 def get_follow_up_plan() -> dict:
@@ -184,7 +187,7 @@ def get_follow_up_plan() -> dict:
     }
 
 
-def assess_uti_patient(patient: PatientState) -> AssessmentOutput:
+def assess_uti_patient(patient: PatientState) -> AssessmentOutput:  # noqa: PLR0911
     """
     Main UTI assessment function following the Mermaid algorithm exactly:
     1. Check if patient has asymptomatic bacteriuria -> no antibiotics
@@ -345,7 +348,7 @@ def get_enhanced_follow_up_plan(patient: PatientState) -> dict:
         special_instructions.append(
             "Monitor elderly patients closely for adverse effects",
         )
-    if patient.history.ACEI_ARB_use:
+    if patient.history.acei_arb_use:
         special_instructions.append("Monitor for hyperkalemia if TMP/SMX prescribed")
     if patient.renal_function_summary.value == "impaired":
         special_instructions.append("Consider dose adjustment for renal impairment")
@@ -371,7 +374,9 @@ def get_contraindications_from_assessment(assessment: AssessmentOutput) -> list[
 
 
 def state_validator(
-    patient: PatientState, regimen_text: str, safety: dict | None,
+    patient: PatientState,
+    regimen_text: str,
+    safety: dict | None,
 ) -> ValidatorResult:
     """Validate patient state against UTI algorithm rules"""
 
@@ -462,7 +467,7 @@ def state_validator(
             ),
             # Drug interaction rules
             ValidationRule(
-                condition=patient.history.ACEI_ARB_use
+                condition=patient.history.acei_arb_use
                 and any(term in rt for term in ["tmp", "sulfamethoxazole", "smx"]),
                 rule_name="acei_arb_plus_tmpsmx_hyperkalemia_risk",
             ),
@@ -521,7 +526,7 @@ def state_validator(
                 elif rule.severity == "moderate" and severity != "high":
                     severity = "moderate"
 
-    except Exception:
+    except Exception:  # noqa: S110
         pass  # Maintain existing error handling behavior
 
     passed = severity != "high" and not contradictions

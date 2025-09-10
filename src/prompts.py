@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import json
+from typing import TYPE_CHECKING
 
-from .models import AssessmentOutput, PatientState
+if TYPE_CHECKING:
+    from .models import AssessmentOutput, PatientState
 
 SYSTEM_ROLE_CLINICAL_REASONING = """You are an expert clinical pharmacist and infectious disease specialist providing clinical decision support for UTI assessment and treatment planning."""
 
@@ -12,7 +14,8 @@ SYSTEM_ROLE_WEB_RESEARCH = """You are a clinical research assistant providing ev
 
 
 def make_clinical_reasoning_prompt(
-    patient: PatientState, assessment_details: dict | None = None,
+    patient: PatientState,
+    assessment_details: dict | None = None,
 ) -> str:
     assessment_block = ""
     if isinstance(assessment_details, dict) and assessment_details:
@@ -87,7 +90,7 @@ History:
 - Recent antibiotics (90d): {patient.history.antibiotics_last_90d}
 - Allergies: {", ".join(patient.history.allergies) if patient.history.allergies else "None"}
 - Current medications: {", ".join(patient.history.meds) if patient.history.meds else "None"}
-- ACEI/ARB use: {patient.history.ACEI_ARB_use}
+- ACEI/ARB use: {patient.history.acei_arb_use}
 - Catheter: {patient.history.catheter}
 - Kidney stones: {patient.history.stones}
 - Immunocompromised: {patient.history.immunocompromised}
@@ -153,7 +156,7 @@ Pregnancy: {patient.pregnancy_status}
 Renal function: {patient.renal_function_summary.value}
 Known allergies: {", ".join(patient.history.allergies) if patient.history.allergies else "None"}
 Current medications: {", ".join(patient.history.meds) if patient.history.meds else "None"}
-ACEI/ARB use: {patient.history.ACEI_ARB_use}
+ACEI/ARB use: {patient.history.acei_arb_use}
 Immunocompromised: {patient.history.immunocompromised}
 </PATIENT_SAFETY_PROFILE>
 
@@ -301,7 +304,7 @@ Symptoms: Dysuria={patient.symptoms.dysuria}, Urgency={patient.symptoms.urgency}
 
 Red flags: Fever={patient.red_flags.fever}, Rigors={patient.red_flags.rigors}, Flank pain={patient.red_flags.flank_pain}, Nausea/vomiting={patient.red_flags.nausea_vomiting}, Systemic={patient.red_flags.systemic}
 
-History: Recent antibiotics={patient.history.antibiotics_last_90d}, Allergies={", ".join(patient.history.allergies) if patient.history.allergies else "None"}, Current meds={", ".join(patient.history.meds) if patient.history.meds else "None"}, ACEI/ARB={patient.history.ACEI_ARB_use}, Catheter={patient.history.catheter}, Stones={patient.history.stones}, Immunocompromised={patient.history.immunocompromised}
+History: Recent antibiotics={patient.history.antibiotics_last_90d}, Allergies={", ".join(patient.history.allergies) if patient.history.allergies else "None"}, Current meds={", ".join(patient.history.meds) if patient.history.meds else "None"}, ACEI/ARB={patient.history.acei_arb_use}, Catheter={patient.history.catheter}, Stones={patient.history.stones}, Immunocompromised={patient.history.immunocompromised}
 
 Recurrence: Relapse 4w={patient.recurrence.relapse_within_4w}, Recurrent 6m={patient.recurrence.recurrent_6m}, Recurrent 12m={patient.recurrence.recurrent_12m}
 </CLINICAL_PRESENTATION>

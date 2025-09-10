@@ -60,7 +60,7 @@ class PregnancyStatus(str, Enum):
 
 
 class VerificationVerdict(str, Enum):
-    pass_verdict = "pass"
+    pass_verdict = "pass"  # noqa: S105
     needs_review = "needs_review"
     fail = "fail"
 
@@ -165,17 +165,21 @@ TREATMENT_OPTIONS = {
 
 class Symptoms(BaseModel):
     dysuria: bool = Field(
-        ..., description="Painful urination reported within current episode.",
+        ...,
+        description="Painful urination reported within current episode.",
     )
     urgency: bool = Field(..., description="Sudden compelling need to urinate.")
     frequency: bool = Field(
-        ..., description="Urination frequency above normal for patient.",
+        ...,
+        description="Urination frequency above normal for patient.",
     )
     suprapubic_pain: bool = Field(
-        ..., description="Pain or discomfort in suprapubic area.",
+        ...,
+        description="Pain or discomfort in suprapubic area.",
     )
     hematuria: bool = Field(
-        ..., description="Visible blood in urine or positive dipstick.",
+        ...,
+        description="Visible blood in urine or positive dipstick.",
     )
     gross_hematuria: bool = Field(
         default=False,
@@ -192,10 +196,11 @@ class Symptoms(BaseModel):
 
 
 class RedFlags(BaseModel):
-    fever: bool = Field(..., description="Temperature ≥38°C within past 24–48h.")
+    fever: bool = Field(..., description="Temperature ≥38°C within past 24-48h.")
     rigors: bool = Field(..., description="Shaking chills suggesting bacteremia.")
     flank_pain: bool = Field(
-        ..., description="Unilateral/bilateral flank or CVA tenderness.",
+        ...,
+        description="Unilateral/bilateral flank or CVA tenderness.",
     )
     back_pain: bool = Field(
         default=False,
@@ -203,26 +208,30 @@ class RedFlags(BaseModel):
     )
     nausea_vomiting: bool = Field(..., description="Nausea and/or vomiting present.")
     systemic: bool = Field(
-        ..., description="Signs of systemic illness or sepsis concern.",
+        ...,
+        description="Signs of systemic illness or sepsis concern.",
     )
 
 
 class History(BaseModel):
     antibiotics_last_90d: bool = Field(
-        ..., description="Any systemic antibiotic exposure within last 90 days.",
+        ...,
+        description="Any systemic antibiotic exposure within last 90 days.",
     )
     allergies: list[str] = Field(
-        default_factory=list, description="All reported allergies (free-text).",
+        default_factory=list,
+        description="All reported allergies (free-text).",
     )
     meds: list[str] = Field(default_factory=list, description="Active medication list.")
-    ACEI_ARB_use: bool = Field(
+    acei_arb_use: bool = Field(
         ...,
         description="True if ACE inhibitor or ARB used (hyperkalemia risk with TMP/SMX).",
     )
     catheter: bool = Field(..., description="Indwelling urinary catheter present.")
     stones: bool = Field(..., description="Known urinary tract stones history.")
     immunocompromised: bool = Field(
-        ..., description="Any condition or therapy causing immunosuppression.",
+        ...,
+        description="Any condition or therapy causing immunosuppression.",
     )
     neurogenic_bladder: bool = Field(
         default=False,
@@ -291,7 +300,8 @@ class History(BaseModel):
 
 class Recurrence(BaseModel):
     relapse_within_4w: bool = Field(
-        ..., description="Return of symptoms within 4 weeks post-therapy.",
+        ...,
+        description="Return of symptoms within 4 weeks post-therapy.",
     )
     recurrent_6m: bool = Field(..., description="≥2 UTIs within 6 months.")
     recurrent_12m: bool = Field(..., description="≥3 UTIs within 12 months.")
@@ -301,10 +311,12 @@ class PatientState(BaseModel):
     age: int = Field(..., ge=0, le=120, description="Patient age in years.")
     sex: Sex = Field(..., description="Administrative sex for safety rules.")
     pregnancy_status: PregnancyStatus = Field(
-        ..., description="Pregnancy status at time of assessment.",
+        ...,
+        description="Pregnancy status at time of assessment.",
     )
     renal_function_summary: RenalFunction = Field(
-        ..., description="Clinically summarized renal function.",
+        ...,
+        description="Clinically summarized renal function.",
     )
     egfr_ml_min: float | None = Field(
         default=None,
@@ -314,7 +326,8 @@ class PatientState(BaseModel):
     symptoms: Symptoms = Field(..., description="Presenting UTI-related symptoms.")
     red_flags: RedFlags = Field(..., description="Upper tract/systemic signs.")
     history: History = Field(
-        ..., description="Allergy and medication context for safety checks.",
+        ...,
+        description="Allergy and medication context for safety checks.",
     )
     recurrence: Recurrence = Field(..., description="Relapse/recurrent indicators.")
     locale_code: str = Field(
@@ -340,7 +353,8 @@ class PatientState(BaseModel):
 
 class Recommendation(BaseModel):
     regimen: str = Field(
-        ..., description="Chosen agent name (e.g., 'Nitrofurantoin macrocrystals').",
+        ...,
+        description="Chosen agent name (e.g., 'Nitrofurantoin macrocrystals').",
     )
     regimen_agent: MedicationAgent | None = Field(
         default=None,
@@ -354,10 +368,12 @@ class Recommendation(BaseModel):
         description="Acceptable alternatives adhering to algorithm.",
     )
     contraindications: list[str] = Field(
-        default_factory=list, description="Notable reasons to avoid certain agents.",
+        default_factory=list,
+        description="Notable reasons to avoid certain agents.",
     )
     monitoring: list[str] = Field(
-        default_factory=list, description="Monitoring and counseling bullets.",
+        default_factory=list,
+        description="Monitoring and counseling bullets.",
     )
 
     def as_text(self) -> str:
@@ -368,13 +384,16 @@ class Recommendation(BaseModel):
 class AssessmentOutput(BaseModel):
     decision: Decision = Field(..., description="Final routing decision per algorithm.")
     recommendation: Recommendation | None = Field(
-        None, description="Present only if recommend_treatment.",
+        None,
+        description="Present only if recommend_treatment.",
     )
     rationale: list[str] = Field(
-        default_factory=list, description="Short bullets mapping evidence to decision.",
+        default_factory=list,
+        description="Short bullets mapping evidence to decision.",
     )
     follow_up: dict | None = Field(
-        None, description="72-hour plan and escalation triggers.",
+        None,
+        description="72-hour plan and escalation triggers.",
     )
     audit: dict = Field(
         default_factory=dict,
@@ -411,7 +430,7 @@ class ClinicalReasoningOutput(BaseModel):
         default=0.0,
         ge=0.0,
         le=1.0,
-        description="Model-reported confidence for clinical assessment in range 0.0–1.0.",
+        description="Model-reported confidence for clinical assessment in range 0.0-1.0.",
     )
     differential_dx: list[str] = Field(
         default_factory=list,
@@ -477,7 +496,7 @@ class SafetyValidationOutput(BaseModel):
     )
     drug_interactions: list[str] = Field(
         default_factory=list,
-        description="Potential drug–drug interactions with current medications.",
+        description="Potential drug-drug interactions with current medications.",
     )
     monitoring_requirements: list[str] = Field(
         default_factory=list,
@@ -575,14 +594,16 @@ class AuditBundle(BaseModel):
 
 class Claim(BaseModel):
     claim_text: str = Field(
-        ..., description="The extracted claim statement in clear, concise language.",
+        ...,
+        description="The extracted claim statement in clear, concise language.",
     )
     evidence_level: EvidenceLevel = Field(
         default=EvidenceLevel.insufficient,
         description="Assessment of evidence quality supporting this claim.",
     )
     source_context: str = Field(
-        default="", description="Context from which this claim was extracted.",
+        default="",
+        description="Context from which this claim was extracted.",
     )
     citations: list[dict] = Field(
         default_factory=list,
@@ -607,10 +628,12 @@ class VerificationIssue(BaseModel):
         description="Type of verification issue found (contradiction, unsupported_claim, inconsistency).",
     )
     description: str = Field(
-        ..., description="Detailed description of the verification issue.",
+        ...,
+        description="Detailed description of the verification issue.",
     )
     severity: IssueSeverity = Field(
-        default=IssueSeverity.low, description="Severity level: low, moderate, high.",
+        default=IssueSeverity.low,
+        description="Severity level: low, moderate, high.",
     )
     components_affected: list[str] = Field(
         default_factory=list,
@@ -624,17 +647,20 @@ class VerificationReport(BaseModel):
         description="Identified contradictions between different components.",
     )
     unsupported_claims: list[str] = Field(
-        default_factory=list, description="Claims that lack adequate evidence support.",
+        default_factory=list,
+        description="Claims that lack adequate evidence support.",
     )
     alignment_notes: list[str] = Field(
         default_factory=list,
         description="Notes about alignment between assessment components.",
     )
     verdict: VerificationVerdict = Field(
-        ..., description="Overall verification result: pass, needs_review, or fail.",
+        ...,
+        description="Overall verification result: pass, needs_review, or fail.",
     )
     issues: list[VerificationIssue] = Field(
-        default_factory=list, description="Detailed list of verification issues found.",
+        default_factory=list,
+        description="Detailed list of verification issues found.",
     )
     confidence_score: float = Field(
         default=0.0,

@@ -24,7 +24,7 @@
         "antibiotics_last_90d": false,
         "allergies": [],
         "meds": [],
-        "ACEI_ARB_use": false,
+        "acei_arb_use": false,
         "catheter": false,
         "stones": false,
         "immunocompromised": false
@@ -67,7 +67,7 @@
         "antibiotics_last_90d": false,
         "allergies": [],
         "meds": [],
-        "ACEI_ARB_use": false,
+        "acei_arb_use": false,
         "catheter": false,
         "stones": false,
         "immunocompromised": false,
@@ -106,7 +106,7 @@
         "antibiotics_last_90d": false,
         "allergies": [],
         "meds": [],
-        "ACEI_ARB_use": false,
+        "acei_arb_use": false,
         "catheter": false,
         "stones": false,
         "immunocompromised": false
@@ -144,7 +144,7 @@
         "antibiotics_last_90d": false,
         "allergies": [],
         "meds": [],
-        "ACEI_ARB_use": false,
+        "acei_arb_use": false,
         "catheter": false,
         "stones": false,
         "immunocompromised": false
@@ -182,7 +182,7 @@
         "antibiotics_last_90d": false,
         "allergies": [],
         "meds": [],
-        "ACEI_ARB_use": false,
+        "acei_arb_use": false,
         "catheter": true,
         "stones": false,
         "immunocompromised": false
@@ -262,7 +262,7 @@
         "antibiotics_last_90d": true,
         "allergies": [],
         "meds": [],
-        "ACEI_ARB_use": false,
+        "acei_arb_use": false,
         "catheter": false,
         "stones": false,
         "immunocompromised": false
@@ -300,7 +300,7 @@
         "antibiotics_last_90d": false,
         "allergies": [],
         "meds": [],
-        "ACEI_ARB_use": false,
+        "acei_arb_use": false,
         "catheter": false,
         "stones": false,
         "immunocompromised": false
@@ -344,7 +344,7 @@
           "spironolactone",
           "ibuprofen"
         ],
-        "ACEI_ARB_use": false,
+        "acei_arb_use": false,
         "catheter": false,
         "stones": false,
         "immunocompromised": false
@@ -382,7 +382,7 @@
         "antibiotics_last_90d": false,
         "allergies": [],
         "meds": [],
-        "ACEI_ARB_use": false,
+        "acei_arb_use": false,
         "catheter": false,
         "stones": false,
         "immunocompromised": false
@@ -420,7 +420,7 @@
         "antibiotics_last_90d": false,
         "allergies": [],
         "meds": [],
-        "ACEI_ARB_use": false,
+        "acei_arb_use": false,
         "catheter": false,
         "stones": false,
         "immunocompromised": false

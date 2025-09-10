@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 
+import openai
 from agents import Agent, AgentOutputSchema, ModelSettings, Runner, WebSearchTool
 from tenacity import (
     retry,
@@ -30,31 +32,125 @@ AGENT_TEMPERATURES: dict[str, float] = {
 }
 
 
-def _construct_agent_with_temperature(**kwargs) -> Agent:
-    name = str(kwargs.get("name", ""))
-    temp = AGENT_TEMPERATURES.get(name, 0.2)
+def _create_agent(name: str, model: str, instructions: str, output_type=None, tools=None, temperature=None, **kwargs) -> Agent:
+    model_settings_dict = {}
     
-    # Use ModelSettings to configure model parameters
-    # Allow additional model configuration through environment variables or kwargs
-    model_settings_dict = {"temperature": temp}
+    if temperature is not None:
+        model_settings_dict["temperature"] = temperature
+    elif temperature != False:
+        model_settings_dict["temperature"] = AGENT_TEMPERATURES.get(name, 0.2)
     
-    # Add max_tokens if specified (useful for controlling response length)
-    max_tokens = kwargs.pop("max_tokens", None)
-    if max_tokens is not None:
-        model_settings_dict["max_tokens"] = max_tokens
+    if "max_tokens" in kwargs:
+        model_settings_dict["max_tokens"] = kwargs.pop("max_tokens")
+    if "extra_args" in kwargs:
+        model_settings_dict["extra_args"] = kwargs.pop("extra_args")
     
-    # Add any extra model configuration arguments
-    extra_args = kwargs.pop("extra_model_args", None)
-    if extra_args:
-        model_settings_dict["extra_args"] = extra_args
+    agent_kwargs = {
+        "name": name,
+        "model": model,
+        "instructions": instructions,
+    }
     
-    model_settings = ModelSettings(**model_settings_dict)
+    if model_settings_dict:
+        agent_kwargs["model_settings"] = ModelSettings(**model_settings_dict)
     
-    # Add model_settings to kwargs, but allow override if already specified
-    if "model_settings" not in kwargs:
-        kwargs["model_settings"] = model_settings
+    if output_type is not None:
+        agent_kwargs["output_type"] = output_type
+    if tools is not None:
+        agent_kwargs["tools"] = tools
     
-    return Agent(**kwargs)
+    agent_kwargs.update(kwargs)
+    return Agent(**agent_kwargs)
+
+
+async def execute_agent(
+    agent_name: str, 
+    model: str, 
+    instructions: str, 
+    prompt: str, 
+    output_type=None, 
+    tools=None,
+    stream_citations: bool = False,
+    **kwargs,
+) -> dict[str, object]:
+    
+    agent = _create_agent(
+        name=agent_name,
+        model=model, 
+        instructions=instructions,
+        output_type=output_type,
+        tools=tools,
+        **kwargs,
+    )
+    
+    if stream_citations:
+        buf: list[str] = []
+        citations: list[dict] = []
+        seen: set[str] = set()
+        
+        for attempt in range(3):
+            try:
+                stream = Runner.run_streamed(agent, prompt)
+                await _process_stream_events(stream, buf, citations, seen)
+                text_output = "".join(buf).strip()
+                return {"text": text_output, "citations": citations, "model": model, "version": "v1"}
+            except openai.BadRequestError as e:
+                if "temperature" in str(e) and "not supported" in str(e):
+                    logger.info(f"Model {model} doesn't support temperature, retrying without it")
+                    agent_no_temp = _create_agent(
+                        name=agent_name, model=model, instructions=instructions,
+                        output_type=output_type, tools=tools, temperature=False, **kwargs,
+                    )
+                    stream = Runner.run_streamed(agent_no_temp, prompt)
+                    await _process_stream_events(stream, buf, citations, seen)
+                    text_output = "".join(buf).strip()
+                    return {"text": text_output, "citations": citations, "model": model, "version": "v1"}
+                raise
+            except Exception as e:
+                if attempt == 2:
+                    raise
+                logger.warning(f"Agent streaming attempt {attempt + 1} failed, retrying: {e}")
+                await asyncio.sleep(0.5 * (2 ** attempt))
+                buf.clear()
+                citations.clear()
+                seen.clear()
+    
+    for attempt in range(3):
+        try:
+            stream = Runner.run_streamed(agent, prompt)
+            async for _ in stream.stream_events():
+                pass
+            output = stream.final_output
+            break
+        except openai.BadRequestError as e:
+            if "temperature" in str(e) and "not supported" in str(e):
+                logger.info(f"Model {model} doesn't support temperature, retrying without it")
+                agent_no_temp = _create_agent(
+                    name=agent_name, model=model, instructions=instructions,
+                    output_type=output_type, tools=tools, temperature=False, **kwargs,
+                )
+                stream = Runner.run_streamed(agent_no_temp, prompt)
+                async for _ in stream.stream_events():
+                    pass
+                output = stream.final_output
+                break
+            raise
+        except Exception as e:
+            if attempt == 2:
+                raise
+            logger.warning(f"Agent execution attempt {attempt + 1} failed, retrying: {e}")
+            await asyncio.sleep(0.5 * (2 ** attempt))
+    
+    result = {"model": model, "version": "v1"}
+    
+    if hasattr(output, "model_dump"):
+        result.update(output.model_dump())
+        if hasattr(output, "as_narrative"):
+            result["narrative"] = output.as_narrative()
+    elif isinstance(output, dict):
+        result.update(output)
+    
+    return result
 
 
 @retry(
@@ -63,11 +159,7 @@ def _construct_agent_with_temperature(**kwargs) -> Agent:
     wait=wait_exponential(multiplier=0.5, min=0.5, max=4),
     retry=retry_if_exception_type(Exception),
 )
-async def stream_text_and_citations(agent: Agent, prompt: str) -> dict:
-    stream = Runner.run_streamed(agent, prompt)
-    buf: list[str] = []
-    citations: list[dict] = []
-    seen: set[str] = set()
+async def _process_stream_events(stream, buf: list[str], citations: list[dict], seen: set[str]) -> None:
     async for ev in stream.stream_events():
         ev_type = str(getattr(ev, "type", ""))
         if ev_type == "text_delta_event":
@@ -94,7 +186,8 @@ async def stream_text_and_citations(agent: Agent, prompt: str) -> dict:
             elif "web_search_call" in data_type_str and "completed" in data_type_str:
                 try:
                     if hasattr(data, "item") and hasattr(
-                        data.item, "web_search_result",
+                        data.item,
+                        "web_search_result",
                     ):
                         search_result = data.item.web_search_result
                         if hasattr(search_result, "results"):
@@ -135,7 +228,7 @@ async def stream_text_and_citations(agent: Agent, prompt: str) -> dict:
                                 ):
                                     cit["relevance"] = relevance_text.strip()
                                 citations.append(cit)
-                except Exception:
+                except Exception:  # noqa: S110
                     pass
             elif "annotation.added" in data_type_str:
                 try:
@@ -163,7 +256,7 @@ async def stream_text_and_citations(agent: Agent, prompt: str) -> dict:
                             if relevance_text.strip():
                                 cit["relevance"] = relevance_text.strip()
                             citations.append(cit)
-                except Exception:
+                except Exception:  # noqa: S110
                     pass
         elif ev_type == "message_output_item":
             parts = getattr(getattr(ev, "raw_item", None), "content", []) or []
@@ -171,12 +264,22 @@ async def stream_text_and_citations(agent: Agent, prompt: str) -> dict:
                 t = getattr(p, "text", None)
                 if isinstance(t, str) and t:
                     buf.append(t)
-    out = "".join(buf).strip()
-    return {"text": out, "citations": citations}
+
+
+async def stream_text_and_citations(agent: Agent, prompt: str) -> dict[str, object]:
+    return await execute_agent(
+        agent_name=agent.name,
+        model=agent.model,
+        instructions=agent.instructions,
+        prompt=prompt,
+        output_type=getattr(agent, "output_type", None),
+        tools=getattr(agent, "tools", None),
+        stream_citations=True,
+    )
 
 
 def make_clinical_reasoning_agent(model: str) -> Agent:
-    return _construct_agent_with_temperature(
+    return _create_agent(
         name="UTI Doctor Agent (Clinical Reasoning)",
         model=model,
         instructions=(
@@ -197,14 +300,15 @@ def make_clinical_reasoning_agent(model: str) -> Agent:
             "- No chain-of-thought or explanatory text outside the JSON structure"
         ),
         output_type=AgentOutputSchema(
-            ClinicalReasoningOutput, strict_json_schema=False,
+            ClinicalReasoningOutput,
+            strict_json_schema=False,
         ),
         tools=[WebSearchTool()],
     )
 
 
 def make_safety_validation_agent(model: str) -> Agent:
-    return _construct_agent_with_temperature(
+    return _create_agent(
         name="Clinical Pharmacist Safety Agent",
         model=model,
         instructions=(
@@ -238,7 +342,7 @@ def make_safety_validation_agent(model: str) -> Agent:
 
 
 def make_research_agent(model: str) -> Agent:
-    return _construct_agent_with_temperature(
+    return _create_agent(
         name="Web Evidence Synthesis Agent",
         model=model,
         instructions=(
@@ -266,7 +370,7 @@ def make_research_agent(model: str) -> Agent:
 
 
 def make_diagnosis_agent(model: str) -> Agent:
-    return _construct_agent_with_temperature(
+    return _create_agent(
         name="UTI Diagnosis Report Agent",
         model=model,
         instructions=(
@@ -293,7 +397,7 @@ def make_diagnosis_agent(model: str) -> Agent:
 
 
 def make_claim_extractor_agent(model: str) -> Agent:
-    return _construct_agent_with_temperature(
+    return _create_agent(
         name="Claims & Citations Extractor",
         model=model,
         instructions=(
@@ -316,7 +420,7 @@ def make_claim_extractor_agent(model: str) -> Agent:
 
 
 def make_verifier_agent(model: str) -> Agent:
-    return _construct_agent_with_temperature(
+    return _create_agent(
         name="Plan Verification Agent",
         model=model,
         instructions=(

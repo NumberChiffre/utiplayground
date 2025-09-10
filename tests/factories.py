@@ -52,7 +52,7 @@ class HistoryFactory(factory.Factory):
     antibiotics_last_90d = False
     allergies = factory.List([])
     meds = factory.List([])
-    ACEI_ARB_use = False
+    acei_arb_use = False
     catheter = False
     stones = False
     immunocompromised = False
@@ -82,7 +82,8 @@ class PatientStateFactory(factory.Factory):
         ),
     )
     renal_function_summary = factory.Faker(
-        "random_element", elements=[RenalFunction.normal, RenalFunction.impaired],
+        "random_element",
+        elements=[RenalFunction.normal, RenalFunction.impaired],
     )
     egfr_ml_min = None
     symptoms = factory.SubFactory(SymptomsFactory)
@@ -117,7 +118,10 @@ class ComplicatedUTIPatientFactory(PatientStateFactory):
     pregnancy_status = PregnancyStatus.not_pregnant
     renal_function_summary = RenalFunction.normal
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, urgency=True, frequency=True,
+        SymptomsFactory,
+        dysuria=True,
+        urgency=True,
+        frequency=True,
     )
     red_flags = factory.SubFactory(RedFlagsFactory, fever=True, rigors=True)
     history = factory.SubFactory(HistoryFactory)
@@ -130,7 +134,10 @@ class MaleUTIPatientFactory(PatientStateFactory):
     pregnancy_status = PregnancyStatus.not_applicable
     renal_function_summary = RenalFunction.normal
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, urgency=True, suprapubic_pain=True,
+        SymptomsFactory,
+        dysuria=True,
+        urgency=True,
+        suprapubic_pain=True,
     )
     red_flags = factory.SubFactory(RedFlagsFactory)
     history = factory.SubFactory(HistoryFactory)
@@ -143,7 +150,10 @@ class RecurrentUTIPatientFactory(PatientStateFactory):
     pregnancy_status = PregnancyStatus.not_pregnant
     renal_function_summary = RenalFunction.normal  # Fix to avoid complication
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, urgency=True, frequency=True,
+        SymptomsFactory,
+        dysuria=True,
+        urgency=True,
+        frequency=True,
     )
     red_flags = factory.SubFactory(RedFlagsFactory)  # All False by default
     history = factory.SubFactory(HistoryFactory)  # All False by default
@@ -157,10 +167,15 @@ class ElderlyUTIPatientFactory(PatientStateFactory):
     renal_function_summary = RenalFunction.impaired
     egfr_ml_min = 25.0
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, urgency=True, frequency=True,
+        SymptomsFactory,
+        dysuria=True,
+        urgency=True,
+        frequency=True,
     )
     history = factory.SubFactory(
-        HistoryFactory, meds=["lisinopril", "hydrochlorothiazide"], ACEI_ARB_use=True,
+        HistoryFactory,
+        meds=["lisinopril", "hydrochlorothiazide"],
+        acei_arb_use=True,
     )
 
 
@@ -169,10 +184,14 @@ class PatientWithAllergiesFactory(PatientStateFactory):
     sex = Sex.female
     pregnancy_status = PregnancyStatus.not_pregnant
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, frequency=True, suprapubic_pain=True,
+        SymptomsFactory,
+        dysuria=True,
+        frequency=True,
+        suprapubic_pain=True,
     )
     history = factory.SubFactory(
-        HistoryFactory, allergies=["nitrofurantoin", "trimethoprim"],
+        HistoryFactory,
+        allergies=["nitrofurantoin", "trimethoprim"],
     )
 
 
@@ -210,7 +229,10 @@ class PregnantPatientFactory(PatientStateFactory):
     sex = Sex.female
     pregnancy_status = PregnancyStatus.pregnant
     symptoms = factory.SubFactory(
-        SymptomsFactory, dysuria=True, urgency=True, frequency=True,
+        SymptomsFactory,
+        dysuria=True,
+        urgency=True,
+        frequency=True,
     )
 
 
@@ -251,7 +273,7 @@ def create_patient_dict(patient: PatientState) -> dict[str, Any]:
             "antibiotics_last_90d": patient.history.antibiotics_last_90d,
             "allergies": patient.history.allergies,
             "meds": patient.history.meds,
-            "ACEI_ARB_use": patient.history.ACEI_ARB_use,
+            "acei_arb_use": patient.history.acei_arb_use,
             "catheter": patient.history.catheter,
             "stones": patient.history.stones,
             "immunocompromised": patient.history.immunocompromised,

@@ -5,34 +5,27 @@ import logging
 import os
 
 import weave
-from agents import Agent, Runner
-from tenacity import (
-    retry,
-    retry_if_exception_type,
-    stop_after_attempt,
-    wait_exponential,
-)
+from pydantic import BaseModel
 
 from .agents_research import (
+    execute_agent,
     make_claim_extractor_agent,
     make_clinical_reasoning_agent,
     make_diagnosis_agent,
     make_research_agent,
     make_safety_validation_agent,
     make_verifier_agent,
-    stream_text_and_citations,
 )
 from .models import (
     ApprovalDecision,
+    AssessmentOutput,
     AuditBundle,
-    ClinicalReasoningOutput,
     ConsensusLabel,
     Decision,
     InterruptStage,
     OrchestrationPath,
     PatientState,
     Recommendation,
-    SafetyValidationOutput,
 )
 from .prompts import (
     make_claim_extractor_prompt,
@@ -51,6 +44,32 @@ from .uti_algo import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class PatientContext(BaseModel):
+    patient_data: dict[str, object]
+    patient_state: PatientState
+    assessment: AssessmentOutput | None = None
+    
+    @classmethod
+    def from_patient_data(cls, patient_data: dict[str, object]) -> PatientContext:
+        return cls(
+            patient_data=patient_data,
+            patient_state=PatientState(**patient_data),
+        )
+    
+    def get_assessment(self) -> AssessmentOutput:
+        if self.assessment is None:
+            self.assessment = assess_uti_patient(self.patient_state)
+        return self.assessment
+
+
+def _safe_model_dump(obj: object) -> dict[str, object]:
+    if isinstance(obj, dict):
+        return obj
+    if hasattr(obj, "model_dump"):
+        return obj.model_dump()
+    return dict(obj) if obj is not None else {}
 
 
 def _strict_interrupts_enabled() -> bool:
@@ -85,14 +104,6 @@ def _parse_approval(approval_raw: object) -> ApprovalDecision:
     return ApprovalDecision.undecided
 
 
-def _to_dict(obj: object) -> dict:
-    if isinstance(obj, dict):
-        return obj
-    if hasattr(obj, "model_dump"):
-        return obj.model_dump()  # type: ignore[attr-defined]
-    if obj is not None:
-        return dict(obj)
-    return {}
 
 
 async def _maybe_doctor_summary(
@@ -176,9 +187,9 @@ def _build_output(
 def state_validator_op(
     patient_data: dict, regimen_text: str, safety: dict | None,
 ) -> dict:
-    patient = PatientState(**patient_data)
-    val = state_validator(patient, regimen_text, safety)
-    return val.model_dump()
+    context = PatientContext.from_patient_data(patient_data)
+    val = state_validator(context.patient_state, regimen_text, safety)
+    return _safe_model_dump(val)
 
 
 @weave.op(name="pharmacist_refinement_op")
@@ -221,7 +232,7 @@ def _should_verify(
         else None
     )
     risk_str = str(getattr(risk_raw, "value", risk_raw) or "").lower()
-    vdict: dict = _to_dict(validator)
+    vdict = _safe_model_dump(validator)
     severity = str(vdict.get("severity", "")).lower()
     passed = bool(vdict.get("passed", True))
     return (
@@ -232,33 +243,23 @@ def _should_verify(
     )
 
 
-@retry(
-    reraise=True,
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=0.5, min=0.5, max=4),
-    retry=retry_if_exception_type(Exception),
-)
-async def _run_agent_stream_with_retry(agent: Agent, prompt: str) -> object:
-    stream = Runner.run_streamed(agent, prompt)  # type: ignore[attr-defined]
-    async for _ in stream.stream_events():
-        pass
-    return stream.final_output
 
 
 @weave.op(name="clinical_reasoning")
 async def clinical_reasoning(
     patient_data: dict, model: str = "gpt-4.1", assessment_details: dict | None = None,
 ) -> dict:
-    patient = PatientState(**patient_data)
-    prompt = make_clinical_reasoning_prompt(patient, assessment_details)
-    agent: Agent = make_clinical_reasoning_agent(model)
-    out: ClinicalReasoningOutput = await _run_agent_stream_with_retry(agent, prompt)  # type: ignore[assignment]
-    return {
-        **out.model_dump(),
-        "model": agent.model,
-        "version": "v1",
-        "narrative": out.as_narrative(),
-    }
+    context = PatientContext.from_patient_data(patient_data)
+    prompt = make_clinical_reasoning_prompt(context.patient_state, assessment_details)
+    agent = make_clinical_reasoning_agent(model)
+    return await execute_agent(
+        agent_name=agent.name,
+        model=model,
+        instructions=agent.instructions,
+        prompt=prompt,
+        output_type=agent.output_type,
+        tools=agent.tools,
+    )
 
 
 @weave.op(name="safety_validation")
@@ -269,7 +270,7 @@ async def safety_validation(
     model: str = "gpt-4.1",
     clinical_reasoning_context: dict | None = None,
 ) -> dict:
-    patient = PatientState(**patient_data)
+    context = PatientContext.from_patient_data(patient_data)
     rec_text = "None"
     if recommendation:
         rec_text = Recommendation(**recommendation).as_text()
@@ -281,31 +282,39 @@ async def safety_validation(
         if proposed:
             rec_text = proposed
     prompt = make_safety_validation_prompt(
-        patient, decision, rec_text, clinical_reasoning_context,
+        context.patient_state, decision, rec_text, clinical_reasoning_context,
     )
-    agent: Agent = make_safety_validation_agent(model)
-    out: SafetyValidationOutput = await _run_agent_stream_with_retry(agent, prompt)  # type: ignore[assignment]
-    return {
-        **out.model_dump(),
-        "model": agent.model,
-        "version": "v1",
-        "narrative": out.as_narrative(),
-    }
+    agent = make_safety_validation_agent(model)
+    return await execute_agent(
+        agent_name=agent.name,
+        model=model,
+        instructions=agent.instructions,
+        prompt=prompt,
+        output_type=agent.output_type,
+        tools=agent.tools,
+    )
 
 
 @weave.op(name="web_research")
 async def web_research(query: str, region: str, model: str = "gpt-4.1") -> dict:
     prompt = make_web_research_prompt(query, region)
-    agent: Agent = make_research_agent(model)
-    streamed = await stream_text_and_citations(agent, prompt)
-    out = streamed["text"]
-    citations = streamed["citations"]
+    agent = make_research_agent(model)
+    result = await execute_agent(
+        agent_name=agent.name,
+        model=model,
+        instructions=agent.instructions,
+        prompt=prompt,
+        tools=agent.tools,
+        stream_citations=True,
+    )
+    out = result["text"]
+    citations = result["citations"]
     narrative = out if out else f"Evidence summary for {region}."
     return {
         "summary": out,
         "region": region,
         "citations": citations,
-        "model": agent.model,
+        "model": model,
         "version": "v1",
         "narrative": narrative,
     }
@@ -315,8 +324,10 @@ async def web_research(query: str, region: str, model: str = "gpt-4.1") -> dict:
 async def prescribing_considerations(
     patient_data: dict, region: str, model: str = "gpt-4.1",
 ) -> dict:
-    patient = PatientState(**patient_data)
-    considerations = [
+    context = PatientContext.from_patient_data(patient_data)
+    
+    # Base considerations - could be moved to constants
+    base_considerations = [
         "Urine cultures are not routinely recommended for acute uncomplicated cystitis in non-pregnant women, as empirical therapy is typically effective and culture results rarely change management in straightforward cases.",
         "Escherichia coli remains the most common causative organism in uncomplicated cystitis, accounting for approximately 80-90% of cases in otherwise healthy women.",
         f"Current antimicrobial resistance surveillance data for Ontario indicates E. coli resistance rates of approximately 3% for nitrofurantoin and 20% for trimethoprim-sulfamethoxazole, making nitrofurantoin the preferred first-line agent (region: {region}).",
@@ -327,11 +338,14 @@ async def prescribing_considerations(
         "Healthcare providers should monitor for potential drug-drug interactions, particularly the risk of hyperkalemia when prescribing trimethoprim-sulfamethoxazole to patients taking ACE inhibitors or ARBs.",
         "Short-course antimicrobial therapy (3-5 days) is strongly favored for uncomplicated cystitis, as it provides equivalent clinical efficacy while reducing the risk of adverse effects, antimicrobial resistance, and Clostridioides difficile infection.",
     ]
-    assessment = assess_uti_patient(patient)
+    
+    considerations = base_considerations.copy()
+    assessment = context.get_assessment()
     contraindications = get_contraindications_from_assessment(assessment)
     if contraindications:
         considerations.extend([f"Patient-specific: {ci}" for ci in contraindications])
-    citations: list[dict] = []
+    
+    # Get research data
     extra = await web_research(
         "Latest regional resistance and any UTI guideline updates (concise)",
         region,
@@ -339,15 +353,17 @@ async def prescribing_considerations(
     )
     if extra.get("summary"):
         considerations.append(f"Current resistance intelligence: {extra['summary']}")
+    
     citations = list(extra.get("citations", []))
+    
+    # Format considerations
     formatted_considerations = []
     for consideration in considerations:
-        if not consideration.startswith(
-            "Patient-specific:",
-        ) and not consideration.startswith("Current resistance intelligence:"):
+        if not consideration.startswith(("Patient-specific:", "Current resistance intelligence:")):
             formatted_considerations.append(f"• {consideration}")
         else:
             formatted_considerations.append(f"\n{consideration}")
+    
     narrative = "Prescribing Considerations:\n\n" + "\n".join(formatted_considerations)
     return {
         "considerations": considerations,
@@ -366,80 +382,73 @@ async def deep_research_diagnosis(
     doctor_reasoning: dict | None = None,
     safety_validation_context: dict | None = None,
 ) -> dict:
-    patient = PatientState(**patient_data)
-    assessment = assess_uti_patient(patient)
+    context = PatientContext.from_patient_data(patient_data)
+    assessment = context.get_assessment()
     xml = make_diagnosis_xml_prompt(
-        patient, assessment, doctor_reasoning, safety_validation_context,
+        context.patient_state, assessment, doctor_reasoning, safety_validation_context,
     )
-    agent: Agent = make_diagnosis_agent(model)
-    streamed = await stream_text_and_citations(agent, xml)
-    out = streamed["text"]
-    citations = streamed["citations"]
-    summary = out
+    agent = make_diagnosis_agent(model)
+    result = await execute_agent(
+        agent_name=agent.name,
+        model=model,
+        instructions=agent.instructions,
+        prompt=xml,
+        tools=agent.tools,
+        stream_citations=True,
+    )
+    out = result["text"]
+    citations = result["citations"]
     return {
         "diagnosis": out,
         "citations": citations,
-        "model": agent.model,
-        "assessment": assessment.model_dump(),
+        "model": model,
+        "assessment": _safe_model_dump(assessment),
         "version": "v1",
-        "narrative": summary,
+        "narrative": out,  # Use diagnosis as narrative
     }
 
 
 @weave.op(name="assess_and_plan")
 async def assess_and_plan(patient_data: dict) -> dict:
-    patient = PatientState(**patient_data)
-    result = assess_uti_patient(patient)
-    rd = result.model_dump()
+    context = PatientContext.from_patient_data(patient_data)
+    result = context.get_assessment()  # Use cached assessment
+    rd = _safe_model_dump(result)
     decision = rd.get("decision", "unknown")
     rec_obj = rd.get("recommendation")
-    rec_text = Recommendation(**rec_obj).as_text()
+    rec_text = Recommendation(**rec_obj).as_text() if rec_obj else "None"
     rationale = rd.get("rationale", [])
     follow_up = rd.get("follow_up")
 
-    def _format_assessment_narrative(
-        decision: str, rec_text: str, rationale: list[str], follow_up: str | None,
-    ) -> str:
-        narrative_lines = [
-            f"Decision: {decision}",
-            f"Recommendation: {rec_text}",
-            f"Rationale: {'; '.join(rationale)}",
-        ]
-        if follow_up:
-            narrative_lines.append(f"Follow-up: {follow_up}")
-        return " \n".join(narrative_lines)
-
+    narrative_lines = [
+        f"Decision: {decision}",
+        f"Recommendation: {rec_text}",
+        f"Rationale: {'; '.join(rationale)}",
+    ]
+    if follow_up:
+        narrative_lines.append(f"Follow-up: {follow_up}")
+    
     rd["version"] = rd.get("version", "v1")
-    rd["narrative"] = _format_assessment_narrative(
-        decision, rec_text, rationale, follow_up,
-    )
+    rd["narrative"] = " \n".join(narrative_lines)
     return rd
 
 
 @weave.op(name="follow_up_plan")
 async def follow_up_plan(patient_data: dict) -> dict:
-    patient = PatientState(**patient_data)
-    plan_details = get_enhanced_follow_up_plan(patient)
+    context = PatientContext.from_patient_data(patient_data)
+    plan_details = get_enhanced_follow_up_plan(context.patient_state)
 
-    def _format_follow_up_narrative(
-        monitoring: list[str], special_instructions: list[str],
-    ) -> str:
-        narrative_parts = ["72-hour follow-up plan prepared."]
-        if monitoring:
-            monitoring_formatted = "\n".join([f"• {item}" for item in monitoring])
-            narrative_parts.append(f"Monitoring:\n{monitoring_formatted}")
-        if special_instructions:
-            special_formatted = "\n".join(
-                [f"• {item}" for item in special_instructions],
-            )
-            narrative_parts.append(f"Special Instructions:\n{special_formatted}")
-        return " \n".join(narrative_parts)
-
-    narrative = _format_follow_up_narrative(
-        plan_details["monitoring_checklist"],
-        plan_details["special_instructions"],
-    )
-
+    narrative_parts = ["72-hour follow-up plan prepared."]
+    monitoring = plan_details.get("monitoring_checklist", [])
+    special_instructions = plan_details.get("special_instructions", [])
+    
+    if monitoring:
+        monitoring_formatted = "\n".join([f"• {item}" for item in monitoring])
+        narrative_parts.append(f"Monitoring:\n{monitoring_formatted}")
+    if special_instructions:
+        special_formatted = "\n".join([f"• {item}" for item in special_instructions])
+        narrative_parts.append(f"Special Instructions:\n{special_formatted}")
+    
+    narrative = " \n".join(narrative_parts)
     return {
         **plan_details,
         "version": "v1",
@@ -451,7 +460,9 @@ async def follow_up_plan(patient_data: dict) -> dict:
 async def uti_complete_patient_assessment(
     patient_data: dict, model: str = "gpt-4.1",
 ) -> dict:
+    context = PatientContext.from_patient_data(patient_data)
     assessment_result = await assess_and_plan(patient_data)
+    
     assessment_details = {
         "decision": assessment_result.get("decision"),
         "recommendation": assessment_result.get("recommendation"),
@@ -566,21 +577,18 @@ async def uti_complete_patient_assessment(
             ApprovalDecision.do_not_start,
             ApprovalDecision.refer_no_antibiotics,
         ]:
-            patient = PatientState(**patient_data)
             refine_prompt = make_reasoning_refinement_prompt(
-                patient, clinical_result, safety_result,
+                context.patient_state, clinical_result, safety_result,
             )
             agent = make_clinical_reasoning_agent(model)
-            refined_out: ClinicalReasoningOutput = await _run_agent_stream_with_retry(
-                agent, refine_prompt,
-            )  # type: ignore[assignment]
-            if refined_out is not None and hasattr(refined_out, "model_dump"):
-                refined_dict = refined_out.model_dump()  # type: ignore[attr-defined]
-                clinical_result = {
-                    **refined_dict,
-                    "model": agent.model,
-                    "version": "v1",
-                }
+            clinical_result = await execute_agent(
+                agent_name=agent.name,
+                model=model,
+                instructions=agent.instructions,
+                prompt=refine_prompt,
+                output_type=agent.output_type,
+                tools=agent.tools,
+            )
 
     safety_approval = _parse_approval(
         (safety_result or {}).get("approval_recommendation", "undecided"),
@@ -663,9 +671,7 @@ async def uti_complete_patient_assessment(
             diagnosis=None,
             follow_up_details=None,
             consensus=ConsensusLabel.validator_interrupt.value,
-            validator=validator
-            if isinstance(validator, dict)
-            else getattr(validator, "model_dump", lambda: validator)(),
+            validator=_safe_model_dump(validator),
             model=model,
             patient_inputs=patient_data,
             human_escalation=True,
@@ -714,23 +720,47 @@ async def uti_complete_patient_assessment(
         clinical_result, validator, safety_result, confidence_threshold=0.8,
     )
 
-    if should_verify:
-        verifier_agent = make_verifier_agent(model)
-        verifier_prompt = make_verifier_prompt(final_snapshot)
-        verification_report = await _run_agent_stream_with_retry(
-            verifier_agent, verifier_prompt,
-        )
-        if verification_report is not None and hasattr(
-            verification_report, "model_dump",
-        ):
-            verification_report = verification_report.model_dump()  # type: ignore[attr-defined]
-
+    verification_report = None
     claims_output = None
-    claims_agent = make_claim_extractor_agent(model)
-    claims_prompt = make_claim_extractor_prompt(final_snapshot)
-    claims_output = await _run_agent_stream_with_retry(claims_agent, claims_prompt)
-    if claims_output is not None and hasattr(claims_output, "model_dump"):
-        claims_output = claims_output.model_dump()  # type: ignore[attr-defined]
+    
+    if should_verify:
+        verifier_prompt = make_verifier_prompt(final_snapshot)
+        claims_prompt = make_claim_extractor_prompt(final_snapshot)
+        
+        verifier_agent = make_verifier_agent(model)
+        claims_agent = make_claim_extractor_agent(model)
+        
+        verification_task = execute_agent(
+            agent_name=verifier_agent.name,
+            model=model,
+            instructions=verifier_agent.instructions,
+            prompt=verifier_prompt,
+            output_type=verifier_agent.output_type,
+            tools=getattr(verifier_agent, "tools", None),
+        )
+        claims_task = execute_agent(
+            agent_name=claims_agent.name,
+            model=model,
+            instructions=claims_agent.instructions,
+            prompt=claims_prompt,
+            output_type=claims_agent.output_type,
+            tools=getattr(claims_agent, "tools", None),
+        )
+        
+        verification_report, claims_output = await asyncio.gather(
+            verification_task, claims_task,
+        )
+    else:
+        claims_prompt = make_claim_extractor_prompt(final_snapshot)
+        claims_agent = make_claim_extractor_agent(model)
+        claims_output = await execute_agent(
+            agent_name=claims_agent.name,
+            model=model,
+            instructions=claims_agent.instructions,
+            prompt=claims_prompt,
+            output_type=claims_agent.output_type,
+            tools=getattr(claims_agent, "tools", None),
+        )
     _ = prescriber_signoff_op(_prescriber_signoff_required())
 
     return _build_output(
@@ -743,9 +773,7 @@ async def uti_complete_patient_assessment(
         diagnosis=diagnosis_result,
         follow_up_details=follow_up_details,
         consensus=consensus_recommendation,
-        validator=validator
-        if isinstance(validator, dict)
-        else getattr(validator, "model_dump", lambda: validator)(),
+        validator=_safe_model_dump(validator),
         model=model,
         patient_inputs=patient_data,
         human_escalation=False,

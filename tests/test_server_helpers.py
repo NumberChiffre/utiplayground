@@ -29,7 +29,7 @@ class TestBuildPatientCoverage:
             history_antibiotics_last_90d=False,
             history_allergies=None,
             history_meds=None,
-            history_ACEI_ARB_use=False,
+            history_acei_arb_use=False,
             history_catheter=False,
             history_neurogenic_bladder=None,
             history_stones=False,
@@ -65,7 +65,7 @@ class TestBuildPatientCoverage:
         assert result["history"]["antibiotics_last_90d"] is False
         assert result["history"]["allergies"] == []  # None -> []
         assert result["history"]["meds"] == []  # None -> []
-        assert result["history"]["ACEI_ARB_use"] is False
+        assert result["history"]["acei_arb_use"] is False
         assert result["history"]["catheter"] is False
         assert result["history"]["stones"] is False
         assert result["history"]["immunocompromised"] is False
@@ -99,7 +99,7 @@ class TestBuildPatientCoverage:
             history_antibiotics_last_90d=True,
             history_allergies=allergies,
             history_meds=medications,
-            history_ACEI_ARB_use=True,
+            history_acei_arb_use=True,
             history_catheter=True,
             history_neurogenic_bladder=None,
             history_stones=True,
@@ -127,7 +127,7 @@ class TestBuildPatientCoverage:
         assert result["history"]["antibiotics_last_90d"] is True
         assert result["history"]["allergies"] == allergies
         assert result["history"]["meds"] == medications
-        assert result["history"]["ACEI_ARB_use"] is True
+        assert result["history"]["acei_arb_use"] is True
         assert result["history"]["catheter"] is True
         assert result["history"]["stones"] is True
         assert result["history"]["immunocompromised"] is True
@@ -156,7 +156,7 @@ class TestBuildPatientCoverage:
             history_antibiotics_last_90d=False,
             history_allergies=[],
             history_meds=[],
-            history_ACEI_ARB_use=False,
+            history_acei_arb_use=False,
             history_catheter=False,
             history_neurogenic_bladder=None,
             history_stones=False,
@@ -332,7 +332,7 @@ class TestServerHelpersEdgeCases:
             history_antibiotics_last_90d=False,
             history_allergies=["test allergy"],
             history_meds=["test med"],
-            history_ACEI_ARB_use=False,
+            history_acei_arb_use=False,
             history_catheter=False,
             history_neurogenic_bladder=None,
             history_stones=False,

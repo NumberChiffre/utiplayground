@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import asyncio
 
-from pydantic import BaseModel
-
 from agents import (
     Agent,
     GuardrailFunctionOutput,
@@ -13,6 +11,7 @@ from agents import (
     TResponseInputItem,
     input_guardrail,
 )
+from pydantic import BaseModel
 
 """
 This example shows how to use guardrails.
@@ -43,7 +42,7 @@ guardrail_agent = Agent(
 
 @input_guardrail
 async def math_guardrail(
-    context: RunContextWrapper[None], agent: Agent, input: str | list[TResponseInputItem]
+    context: RunContextWrapper[None], agent: Agent, input: str | list[TResponseInputItem],
 ) -> GuardrailFunctionOutput:
     """This is an input guardrail function, which happens to call an agent to check if the input
     is a math homework question.
@@ -75,7 +74,7 @@ async def main():
             {
                 "role": "user",
                 "content": user_input,
-            }
+            },
         )
 
         try:
@@ -91,7 +90,7 @@ async def main():
                 {
                     "role": "assistant",
                     "content": message,
-                }
+                },
             )
 
     # Sample run:

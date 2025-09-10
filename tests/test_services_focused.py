@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# ruff: noqa: SIM117
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -34,7 +35,7 @@ class TestServicesErrorHandling:
                 result = await services.clinical_reasoning(patient_data)
                 # The function might return an error dict or handle it differently
                 assert isinstance(result, dict)
-            except Exception:
+            except Exception:  # noqa: S110
                 # If it does raise, that's also acceptable behavior to test
                 pass
 
@@ -162,7 +163,8 @@ class TestServiceParameterHandling:
                     mock_web.side_effect = Exception("Web research failed")
 
                     result = await services.prescribing_considerations(
-                        patient_data, "CA-ON",
+                        patient_data,
+                        "CA-ON",
                     )
 
                     # Should still return basic considerations despite web research failure
@@ -237,7 +239,7 @@ class TestServiceUtilityFunctions:
         """Test follow-up plan includes ACEI/ARB monitoring when applicable"""
         # Create patient with ACEI use
         patient = SimpleUTIPatientFactory()
-        patient.history.ACEI_ARB_use = True
+        patient.history.acei_arb_use = True
         patient_data = create_patient_dict(patient)
 
         result = await services.follow_up_plan(patient_data)

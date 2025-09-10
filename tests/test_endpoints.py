@@ -23,7 +23,7 @@ class TestBuildPatient:
             sex="female",
             pregnancy_status="not_pregnant",
             renal_function_summary="normal",
-            egfr_mL_min=None,
+            egfr_ml_min=None,
             symptoms_dysuria=True,
             symptoms_urgency=True,
             symptoms_frequency=False,
@@ -37,7 +37,7 @@ class TestBuildPatient:
             history_antibiotics_last_90d=False,
             history_allergies=["penicillin"],
             history_meds=["ibuprofen"],
-            history_ACEI_ARB_use=False,
+            history_acei_arb_use=False,
             history_catheter=False,
             history_neurogenic_bladder=None,
             history_stones=False,
@@ -62,7 +62,7 @@ class TestBuildPatient:
             sex="female",
             pregnancy_status="not_pregnant",
             renal_function_summary="normal",
-            egfr_mL_min=None,
+            egfr_ml_min=None,
             symptoms_dysuria=True,
             symptoms_urgency=False,
             symptoms_frequency=False,
@@ -76,7 +76,7 @@ class TestBuildPatient:
             history_antibiotics_last_90d=False,
             history_allergies=None,
             history_meds=None,
-            history_ACEI_ARB_use=False,
+            history_acei_arb_use=False,
             history_catheter=False,
             history_neurogenic_bladder=None,
             history_stones=False,
@@ -224,7 +224,7 @@ class TestMCPToolHelpers:
             sex="female",
             pregnancy_status="not_pregnant",
             renal_function_summary="normal",
-            egfr_mL_min=None,
+            egfr_ml_min=None,
             symptoms_dysuria=True,
             symptoms_urgency=False,
             symptoms_frequency=True,
@@ -238,7 +238,7 @@ class TestMCPToolHelpers:
             history_antibiotics_last_90d=False,
             history_allergies=["sulfa"],
             history_meds=["lisinopril"],
-            history_ACEI_ARB_use=True,
+            history_acei_arb_use=True,
             history_catheter=False,
             history_neurogenic_bladder=None,
             history_stones=False,
@@ -257,7 +257,7 @@ class TestMCPToolHelpers:
 
         # Check nested structure
         assert patient_data["symptoms"]["dysuria"] is True
-        assert patient_data["history"]["ACEI_ARB_use"] is True
+        assert patient_data["history"]["acei_arb_use"] is True
         assert patient_data["history"]["allergies"] == ["sulfa"]
 
     def test_recommendation_data_transformation(self):
@@ -284,7 +284,7 @@ class TestMCPToolHelpers:
             sex="female",
             pregnancy_status="not_pregnant",
             renal_function_summary="normal",
-            egfr_mL_min=None,
+            egfr_ml_min=None,
             symptoms_dysuria=True,
             symptoms_urgency=False,
             symptoms_frequency=False,
@@ -298,7 +298,7 @@ class TestMCPToolHelpers:
             history_antibiotics_last_90d=False,
             history_allergies=None,
             history_meds=None,
-            history_ACEI_ARB_use=False,
+            history_acei_arb_use=False,
             history_catheter=False,
             history_neurogenic_bladder=None,
             history_stones=False,
