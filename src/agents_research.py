@@ -37,7 +37,7 @@ def _create_agent(name: str, model: str, instructions: str, output_type=None, to
     
     if temperature is not None:
         model_settings_dict["temperature"] = temperature
-    elif temperature != False:
+    elif temperature:
         model_settings_dict["temperature"] = AGENT_TEMPERATURES.get(name, 0.2)
     
     if "max_tokens" in kwargs:

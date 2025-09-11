@@ -216,7 +216,7 @@ def pharmacist_refinement_op(recommendation: dict, safety_result: dict) -> dict:
 
 @weave.op(name="prescriber_signoff_op")
 def prescriber_signoff_op(enabled: bool) -> dict:
-    return {"prescriber_signoff_required": bool(enabled)}
+    return {"prescriber_signoff_required": enabled}
 
 
 def _should_verify(
