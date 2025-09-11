@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+
 import weave
 from pydantic import BaseModel
 
@@ -24,8 +25,8 @@ from .models import (
     InterruptStage,
     OrchestrationPath,
     PatientState,
-    SectionStatus,
     Recommendation,
+    SectionStatus,
 )
 from .prompts import (
     make_claim_extractor_prompt,
@@ -224,7 +225,7 @@ async def safety_validation(
         rec_text = rec_text_candidate or rec_text
     if clinical_reasoning_context and (
         decision == Decision.recommend_treatment
-        or str(decision) == getattr(Decision, "recommend_treatment").value
+        or str(decision) == Decision.recommend_treatment.value
         or str(decision) == "recommend_treatment"
     ):
         proposed = str(

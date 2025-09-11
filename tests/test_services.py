@@ -31,7 +31,6 @@ from tests.factories import (
     create_patient_dict,
 )
 
-
 # removed: TestRunAgentStreamWithRetry class as function no longer exists
 
 

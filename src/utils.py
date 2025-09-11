@@ -1,5 +1,6 @@
 import os
-from .models import Decision, ApprovalDecision
+
+from .models import ApprovalDecision, Decision
 
 
 def safe_model_dump(obj: object) -> dict[str, object]:
