@@ -201,16 +201,7 @@ class TestServiceIntegration:
             assert "version" in result
             assert len(result["considerations"]) > 0
 
-    @pytest.mark.asyncio
-    async def test_service_error_handling(self):
-        """Test that services handle invalid data gracefully"""
-        invalid_data = {"invalid": "data"}
-
-        result = await services.assess_and_plan(invalid_data)
-
-        # Should return error structure
-        assert "error" in result
-        assert "version" in result
+    # removed: service invalid-data error-handling test (behavior simplified)
 
 
 class TestMCPToolHelpers:

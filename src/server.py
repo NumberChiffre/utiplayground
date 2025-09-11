@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from fastmcp import FastMCP
 from pydantic import Field
 
+from .client import ensure_openai_client
 from .services import (
     assess_and_plan as _assess_and_plan,
 )
@@ -1805,6 +1806,11 @@ async def _ocr_pdf_bytes(pdf_bytes: bytes, warnings: list[str]) -> str | None:
 
 
 def main() -> None:
+    success = ensure_openai_client()
+    if success:
+        logger.info("OpenAI client and Weave tracing initialized for FastMCP server")
+    else:
+        logger.warning("Failed to initialize OpenAI client - missing OPENAI_API_KEY")
     mcp.run()
 
 

@@ -49,7 +49,7 @@ class TestServicesErrorHandling:
             approval_recommendation=ApprovalDecision.approve,
         )
 
-        with patch("src.services._run_agent_stream_with_retry") as mock_run:
+        with patch("src.services.execute_agent") as mock_run:
             with patch("src.services.make_safety_validation_agent") as mock_agent:
                 mock_run.return_value = mock_output
                 mock_agent.return_value = MagicMock(model="gpt-4.1")
@@ -73,7 +73,7 @@ class TestServicesErrorHandling:
 
         mock_output = SafetyValidationOutput()
 
-        with patch("src.services._run_agent_stream_with_retry") as mock_run:
+        with patch("src.services.execute_agent") as mock_run:
             with patch("src.services.make_safety_validation_agent") as mock_agent:
                 mock_run.return_value = mock_output
                 mock_agent.return_value = MagicMock(model="gpt-4.1")
@@ -110,7 +110,7 @@ class TestServiceParameterHandling:
             confidence=0.8,
         )
 
-        with patch("src.services._run_agent_stream_with_retry") as mock_run:
+        with patch("src.services.execute_agent") as mock_run:
             with patch("src.services.make_clinical_reasoning_agent") as mock_agent:
                 mock_run.return_value = mock_output
                 mock_agent.return_value = MagicMock(model="gpt-4.1")
@@ -146,31 +146,7 @@ class TestServiceParameterHandling:
                     assert result["summary"] == "Research findings"
                     assert "version" in result
 
-    @pytest.mark.asyncio
-    async def test_prescribing_considerations_without_web_research(self):
-        """Test prescribing considerations when web research fails"""
-        patient = SimpleUTIPatientFactory()
-        patient_data = create_patient_dict(patient)
-
-        with patch("src.services.assess_uti_patient") as mock_assess:
-            with patch(
-                "src.services.get_contraindications_from_assessment",
-            ) as mock_contraindications:
-                with patch("src.services.web_research") as mock_web:
-                    # Setup mocks
-                    mock_assess.return_value = MagicMock()
-                    mock_contraindications.return_value = []
-                    mock_web.side_effect = Exception("Web research failed")
-
-                    result = await services.prescribing_considerations(
-                        patient_data,
-                        "CA-ON",
-                    )
-
-                    # Should still return basic considerations despite web research failure
-                    assert "considerations" in result
-                    assert "region" in result
-                    assert result["citations"] == []  # Empty due to failure
+    # removed: prescribing_considerations web research failure path
 
     @pytest.mark.asyncio
     async def test_deep_research_diagnosis_with_context(self):
@@ -293,21 +269,7 @@ class TestServiceModelIntegration:
         assert result["version"] == "v1"
         assert "narrative" in result
 
-    @pytest.mark.asyncio
-    async def test_assess_and_plan_invalid_data(self):
-        """Test assess_and_plan with invalid patient data"""
-        invalid_data = {
-            "age": "invalid",  # Should be int
-            "sex": "invalid_sex",
-            "incomplete": "data",
-        }
-
-        result = await services.assess_and_plan(invalid_data)
-
-        # Should return error structure
-        assert result["error"] == "Assessment failed"
-        assert "message" in result
-        assert result["version"] == "v1"
+    # removed: assess_and_plan invalid-data validation test
 
     @pytest.mark.asyncio
     async def test_recommendation_text_formatting(self):

@@ -1,7 +1,7 @@
-# UTI Triage Assistant
+# UTI Assessment Platform
 
 ## Executive Brief
-This UTI Triage Assistant is a production-minded prototype that combines a deterministic clinical algorithm with an LLM intelligence layer to deliver fast, safe, and explainable decisions. It fits clinical workflows: the algorithm guarantees guideline adherence, while agents turn decisions into evidence-backed narratives, safety checks, and patient/provider-ready summaries.
+This UTI Assessment Platform is a production-ready system that combines deterministic clinical algorithms with advanced LLM agents to deliver fast, safe, and explainable UTI treatment decisions. The platform provides multiple interfaces (CLI, API, MCP server) and integrates comprehensive safety validation, real-time evidence synthesis, and complete audit trails for clinical workflows.
 
 ## Why it matters (problem → solution)
 - **Problem**: UTIs are common, but frontline decisions can be slow, inconsistent, and hard to audit. Guidelines, resistance patterns, and safety constraints change frequently.
@@ -18,14 +18,42 @@ This UTI Triage Assistant is a production-minded prototype that combines a deter
 - Tracks safety adherence, guideline concordance, escalation appropriateness, latency, cost, and citation faithfulness with clear release gates.
 
 ## High‑level architecture
-- Deterministic UTI assessment algorithm makes the decision.
-- Agents add clinical reasoning, pharmacist safety review, verification, and web evidence synthesis.
-- A single audit bundle powers sign‑off, compliance, and continuous improvement.
-- Detailed diagrams and technical notes are in the appendix below.
+- **Multiple Interfaces**: CLI, REST API, and MCP server for different integration needs
+- **Deterministic Core**: UTI assessment algorithm makes primary treatment decisions
+- **LLM Intelligence Layer**: Agents provide clinical reasoning, safety validation, and evidence synthesis
+- **Production Infrastructure**: Redis for rate limiting, FastAPI for scalable API, comprehensive observability
+- **Complete Audit Trail**: Immutable audit bundles for compliance and continuous improvement
+- **Safety-First Design**: Multiple validation layers with mandatory human sign-off
 
 ## 🔭 Observability & Tracing (W&B Weave)
 
-We use W&B Weave’s official OpenAI Agents SDK integration to capture end‑to‑end traces of the agentic workflow. Traces are grouped under a single parent operation so you can review the entire patient assessment as one run, with child nodes for each agent/tool call.
+We use W&B Weave's official OpenAI Agents SDK integration to capture end‑to‑end traces of the agentic workflow. Traces are grouped under a single parent operation so you can review the entire patient assessment as one run, with child nodes for each agent/tool call.
+
+## 🗄️ Redis Integration
+
+The platform uses Redis for production-ready features:
+
+### Rate Limiting
+- **API Rate Limiting**: Prevents abuse with configurable rate limits per endpoint
+- **Concurrency Control**: Limits concurrent requests to prevent resource exhaustion
+- **Distributed Locks**: Ensures thread-safe operations across multiple instances
+
+### Caching
+- **Response Caching**: Caches frequent assessment results for improved performance
+- **Session Management**: Maintains user sessions and state across requests
+
+### Setup Redis
+```bash
+# Start Redis container (recommended for development)
+make redis-up
+
+# Or install Redis locally
+# macOS: brew install redis
+# Ubuntu: sudo apt install redis-server
+
+# Verify Redis is running
+redis-cli ping  # Should return PONG
+```
 
 ### Enable
 
@@ -178,29 +206,36 @@ This audit trail ensures complete traceability for regulatory compliance, clinic
 ### Prerequisites
 - Python 3.12+
 - OpenAI API key
+- Docker (optional, for Redis)
 
 ### Installation
 
 1. **Clone and setup environment:**
 ```bash
-uv sync
+# Install dependencies and setup pre-commit hooks
+make setup
 ```
 
 2. **Set up environment variables:**
 ```bash
-cp .env.example .env
-# Edit .env and add your OpenAI API key:
-# OPENAI_API_KEY=your_key_here
+# Create .env file with your API keys
+echo "OPENAI_API_KEY=your_key_here" > .env
+echo "WANDB_API_KEY=your_wandb_key_here" >> .env  # Optional for cloud tracing
 ```
 
-3. **Run a sample case via the CLI:**
+3. **Start Redis (for API rate limiting):**
+```bash
+make redis-up
+```
+
+4. **Run a sample case via the CLI:**
 
 - Reports are written under `reports/`.
 - Try built-in sample patients in `data/sample_patients.json`.
 
 ```bash
 # Good standard example with existing synthetic PatientState
-uv run python -m src.cli --sample "Sarah Smith" --model gpt-4.1 --non-interactive --write-report
+uv run python -m src.cli --sample "Sarah Smith" --model gpt-4o --non-interactive --write-report
 
 # Human interruption required due to patient's case
 uv run python -m src.cli --sample "Daniel Kim Escalation" --model gpt-4.1 --non-interactive --write-report
@@ -244,6 +279,92 @@ JSON file format (either full object below, or wrap under `{"patient": {...}}`):
   "locale_code": "CA-ON"
 }
 ```
+
+## 🌐 REST API
+
+The platform provides a comprehensive REST API for integration with external systems. The API includes rate limiting, concurrency controls, and comprehensive error handling.
+
+### Start the API Server
+```bash
+# Start the FastAPI server with Redis
+make run
+
+# Or run directly
+uv run uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### API Endpoints
+
+#### Health & Readiness
+- `GET /api/healthz` - Health check endpoint
+- `GET /api/readyz` - Readiness check (validates external dependencies)
+
+#### Core Assessment Endpoints
+- `POST /api/assess-and-plan` - Execute deterministic UTI assessment algorithm
+- `POST /api/uti-complete-assessment` - Full orchestrated assessment with all agents
+- `POST /api/clinical-reasoning` - Generate detailed clinical reasoning
+- `POST /api/safety-validation` - Medication safety screening and validation
+- `POST /api/prescribing-considerations` - Region-aware prescribing guidance
+- `POST /api/deep-research-diagnosis` - Multi-agent provider-ready diagnosis
+- `POST /api/follow-up-plan` - Standardized 72-hour follow-up protocols
+- `GET /api/research-summary` - Evidence-based research with current guidelines
+
+### API Usage Examples
+
+#### Basic Assessment
+```bash
+curl -X POST "http://localhost:8000/api/assess-and-plan" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 28,
+    "sex": "female",
+    "pregnancy_status": "no",
+    "renal_function_summary": "normal",
+    "symptoms": {
+      "dysuria": true,
+      "urgency": true,
+      "frequency": false,
+      "suprapubic_pain": false,
+      "hematuria": false
+    },
+    "red_flags": {
+      "fever": false,
+      "rigors": false,
+      "flank_pain": false,
+      "nausea_vomiting": false,
+      "systemic": false
+    },
+    "history": {
+      "antibiotics_last_90d": false,
+      "allergies": [],
+      "meds": [],
+      "ACEI_ARB_use": false,
+      "catheter": false,
+      "stones": false,
+      "immunocompromised": false
+    },
+    "recurrence": {
+      "relapse_within_4w": false,
+      "recurrent_6m": false,
+      "recurrent_12m": false
+    },
+    "locale_code": "CA-ON"
+  }'
+```
+
+#### Complete Assessment with All Agents
+```bash
+curl -X POST "http://localhost:8000/api/uti-complete-assessment?model=gpt-4.1" \
+  -H "Content-Type: application/json" \
+  -d '{"age": 28, "sex": "female", ...}'  # Same patient data as above
+```
+
+### API Features
+- **Rate Limiting**: Built-in rate limiting with Redis backend
+- **Concurrency Control**: Configurable concurrency limits to prevent resource exhaustion
+- **Comprehensive Error Handling**: Detailed error responses with proper HTTP status codes
+- **Request Validation**: Pydantic models ensure type safety and data validation
+- **Observability**: Full request/response logging and metrics collection
 
 ## 🔧 Technical Features
 
@@ -315,8 +436,9 @@ Validator precedes evidence synthesis: research and diagnosis run only after the
 ### MCP Server Integration
 - **FastMCP Server**: Expose all UTI agents as MCP tools for AI assistants
 - **Pydantic Validation**: Type-safe tool parameters with detailed descriptions  
-- **Clinical Tool Suite**: 8 specialized tools for UTI assessment and research
+- **Clinical Tool Suite**: 9 specialized tools for UTI assessment and research
 - **Compatible Clients**: Works with Claude Desktop, Cursor, and other MCP clients
+- **Production Ready**: Includes error handling, validation, and comprehensive logging
 
 #### MCP Tools Available
 - `assess_and_plan` - Execute deterministic UTI assessment algorithm
@@ -399,21 +521,102 @@ The result you get from the above query and input is shown as follows in Cursor 
 
 ## 🧪 Testing & Development
 
-### Run Tests
+### Development Workflow
+
+The project includes a comprehensive Makefile for common development tasks:
+
 ```bash
-uv run pytest tests/
+# Setup project (install deps + pre-commit hooks)
+make setup
+
+# Code quality checks
+make lint          # Run linter with auto-fix
+make format        # Format code
+make test          # Run all tests
+make ci            # Run all CI checks (lint, format, test)
+
+# Infrastructure
+make redis-up      # Start Redis container
+make redis-down    # Stop Redis container
+make redis-logs    # View Redis logs
+
+# Build and run
+make build         # Build package
+make run           # Start API server with Redis
+make clean         # Clean build artifacts
 ```
 
+### Manual Commands
 
-
-### Start MCP Server (for external clients)
 ```bash
+# Run tests with coverage
+uv run pytest tests/ -v --cov=src
+
+# Start MCP server (for AI assistant integration)
 uv run uti-mcp
+
+# Start API server directly
+uv run uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+
+# Run CLI with sample patient
+uv run python -m src.cli --sample "Sarah Smith" --non-interactive --write-report
 ```
 
 ### Code Quality
 ```bash
-uv run ruff check .    # Linting
-uv run ruff format .   # Formatting  
-uv run mypy src/      # Type checking
+# Linting and formatting
+uv run ruff check src/ tests/ --fix
+uv run ruff format src/ tests/
+
+# Type checking
+uv run mypy src/
+
+# Pre-commit hooks (installed via make setup)
+pre-commit run --all-files
 ```
+
+## 📁 Project Structure
+
+```
+utiplayground/
+├── src/                    # Main source code
+│   ├── api/               # FastAPI REST API
+│   │   ├── main.py        # API application entry point
+│   │   ├── routes.py      # API endpoint definitions
+│   │   ├── dependencies.py # API dependencies and middleware
+│   │   ├── rate_limit.py  # Rate limiting implementation
+│   │   └── observability.py # Metrics and monitoring
+│   ├── cli.py             # Command-line interface
+│   ├── server.py          # MCP server implementation
+│   ├── services.py        # Core business logic and agent orchestration
+│   ├── models.py          # Pydantic data models
+│   ├── uti_algo.py        # Deterministic UTI assessment algorithm
+│   ├── agents_research.py # LLM agent implementations
+│   ├── prompts.py         # Agent prompts and templates
+│   └── client.py          # OpenAI client configuration
+├── tests/                 # Test suite
+│   ├── test_*.py         # Unit and integration tests
+│   ├── conftest.py       # Pytest configuration
+│   └── factories.py      # Test data factories
+├── data/                  # Sample data and test cases
+│   ├── sample_patients.json # Built-in patient test cases
+│   └── patient_notes.txt  # Sample patient notes
+├── reports/               # Generated assessment reports
+├── static/                # Static assets (images, etc.)
+├── pyproject.toml         # Project configuration and dependencies
+├── Makefile              # Development workflow commands
+├── README.md             # This file
+├── EVALUATION.md         # Evaluation framework documentation
+└── CLAUDE.md             # Development guidelines
+```
+
+### Key Components
+
+- **`src/api/`**: Production-ready FastAPI REST API with rate limiting, validation, and observability
+- **`src/services.py`**: Core orchestration logic that coordinates deterministic algorithms with LLM agents
+- **`src/uti_algo.py`**: Deterministic UTI assessment algorithm implementing clinical guidelines
+- **`src/agents_research.py`**: LLM agent implementations for clinical reasoning, safety validation, and research
+- **`src/server.py`**: MCP server for AI assistant integration
+- **`src/cli.py`**: Interactive command-line interface for testing and demonstrations
+- **`tests/`**: Comprehensive test suite with factories and fixtures
+- **`data/`**: Sample patient data and test cases for development and evaluation

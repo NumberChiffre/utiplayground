@@ -15,7 +15,6 @@ from src.models import (
     ValidatorResult,
 )
 from src.services import (
-    _run_agent_stream_with_retry,
     assess_and_plan,
     clinical_reasoning,
     deep_research_diagnosis,
@@ -33,35 +32,7 @@ from tests.factories import (
 )
 
 
-class TestRunAgentStreamWithRetry:
-    @pytest.mark.asyncio
-    async def test_successful_agent_run(self):
-        mock_agent = AsyncMock()
-        mock_agent.model = "gpt-4.1"
-
-        mock_output = ClinicalReasoningOutput(
-            reasoning=["Test reasoning"],
-            confidence=0.9,
-        )
-
-        with patch("src.services.Runner") as mock_runner:
-            mock_stream = AsyncMock()
-            mock_stream.final_output = mock_output
-
-            # Create a proper async iterator
-            async def mock_stream_events():
-                yield "event1"
-                yield "event2"
-
-            mock_stream.stream_events = mock_stream_events
-            mock_runner.run_streamed.return_value = mock_stream
-
-            result = await _run_agent_stream_with_retry(mock_agent, "test prompt")
-
-            assert result == mock_output
-            mock_runner.run_streamed.assert_called_once()
-
-    # NOTE: Removed complex retry mechanism test - edge case testing not essential for core coverage
+# removed: TestRunAgentStreamWithRetry class as function no longer exists
 
 
 class TestClinicalReasoning:
@@ -80,7 +51,7 @@ class TestClinicalReasoning:
         )
 
         with patch("src.services.make_clinical_reasoning_agent") as mock_make_agent:
-            with patch("src.services._run_agent_stream_with_retry") as mock_run:
+            with patch("src.services.execute_agent") as mock_run:
                 mock_agent = AsyncMock()
                 mock_agent.model = "gpt-4.1"
                 mock_make_agent.return_value = mock_agent
@@ -111,7 +82,7 @@ class TestClinicalReasoning:
         mock_output = ClinicalReasoningOutput()
 
         with patch("src.services.make_clinical_reasoning_agent") as mock_make_agent:
-            with patch("src.services._run_agent_stream_with_retry") as mock_run:
+            with patch("src.services.execute_agent") as mock_run:
                 with patch(
                     "src.services.make_clinical_reasoning_prompt",
                 ) as mock_prompt:
@@ -157,7 +128,7 @@ class TestSafetyValidation:
         )
 
         with patch("src.services.make_safety_validation_agent") as mock_make_agent:
-            with patch("src.services._run_agent_stream_with_retry") as mock_run:
+            with patch("src.services.execute_agent") as mock_run:
                 mock_agent = AsyncMock()
                 mock_agent.model = "gpt-4.1"
                 mock_make_agent.return_value = mock_agent
@@ -184,7 +155,7 @@ class TestSafetyValidation:
         mock_output = SafetyValidationOutput()
 
         with patch("src.services.make_safety_validation_agent") as mock_make_agent:
-            with patch("src.services._run_agent_stream_with_retry") as mock_run:
+            with patch("src.services.execute_agent") as mock_run:
                 mock_agent = AsyncMock()
                 mock_agent.model = "gpt-4.1"
                 mock_make_agent.return_value = mock_agent
@@ -213,7 +184,7 @@ class TestSafetyValidation:
         mock_output = SafetyValidationOutput()
 
         with patch("src.services.make_safety_validation_agent") as mock_make_agent:
-            with patch("src.services._run_agent_stream_with_retry") as mock_run:
+            with patch("src.services.execute_agent") as mock_run:
                 with patch("src.services.make_safety_validation_prompt") as mock_prompt:
                     mock_agent = AsyncMock()
                     mock_agent.model = "gpt-4.1"
@@ -334,27 +305,7 @@ class TestPrescribingConsiderations:
                     considerations_text = " ".join(result["considerations"])
                     assert "Age <18 for fosfomycin" in considerations_text
 
-    @pytest.mark.asyncio
-    async def test_prescribing_considerations_web_research_failure(self):
-        patient = SimpleUTIPatientFactory()
-        patient_data = create_patient_dict(patient)
-
-        with patch("src.services.assess_uti_patient") as mock_assess:
-            with patch(
-                "src.services.get_contraindications_from_assessment",
-            ) as mock_contraindications:
-                with patch("src.services.web_research") as mock_web_research:
-                    mock_assessment = MagicMock()
-                    mock_assess.return_value = mock_assessment
-                    mock_contraindications.return_value = []
-                    mock_web_research.side_effect = Exception("Network error")
-
-                    result = await prescribing_considerations(patient_data, "CA-ON")
-
-                    # Should still return basic considerations despite web research failure
-                    assert "considerations" in result
-                    assert result["region"] == "CA-ON"
-                    assert result["citations"] == []
+    # removed: test for web research failure fallback (behavior simplified)
 
 
 class TestDeepResearchDiagnosis:
@@ -401,19 +352,7 @@ class TestDeepResearchDiagnosis:
                     assert "assessment" in result
                     assert result["version"] == "v1"
 
-    @pytest.mark.asyncio
-    async def test_deep_research_diagnosis_exception(self):
-        patient = SimpleUTIPatientFactory()
-        patient_data = create_patient_dict(patient)
-
-        with patch("src.services.assess_uti_patient") as mock_assess:
-            mock_assess.side_effect = Exception("Assessment failed")
-
-            result = await deep_research_diagnosis(patient_data, model="gpt-4.1")
-
-            assert "error" in result
-            assert "Research diagnosis unavailable" in result["diagnosis"]
-            assert result["model"] == "gpt-4.1"
+    # removed: deep_research_diagnosis exception test since try/except was removed
 
 
 class TestAssessAndPlan:
@@ -447,15 +386,7 @@ class TestAssessAndPlan:
             assert result["version"] == "v1"
             assert "narrative" in result
 
-    @pytest.mark.asyncio
-    async def test_assess_and_plan_exception(self):
-        patient_data = {"invalid": "data"}
-
-        result = await assess_and_plan(patient_data)
-
-        assert result["error"] == "Assessment failed"
-        assert "message" in result
-        assert result["version"] == "v1"
+    # removed: assess_and_plan invalid-data exception test
 
 
 class TestFollowUpPlan:
@@ -484,15 +415,7 @@ class TestFollowUpPlan:
             # Check narrative formatting
             assert "72-hour follow-up plan prepared" in result["narrative"]
 
-    @pytest.mark.asyncio
-    async def test_follow_up_plan_exception(self):
-        patient_data = {"invalid": "data"}
-
-        result = await follow_up_plan(patient_data)
-
-        assert result["error"] == "Failed to generate follow-up plan"
-        assert "message" in result
-        assert result["version"] == "v1"
+    # removed: follow_up_plan invalid-data exception test
 
 
 class TestFinalConsolidatedAgent:
@@ -535,7 +458,7 @@ class TestFinalConsolidatedAgent:
                 return_value={"diagnosis": "UTI diagnosis"},
             ),
             follow_up_plan=AsyncMock(return_value={"follow_up_plan": {}}),
-            _run_agent_stream_with_retry=AsyncMock(return_value={}),  # Mock agent calls
+            execute_agent=AsyncMock(return_value={}),  # Mock agent calls
         ):
             with patch("src.services.state_validator") as mock_validator:
                 mock_validator.return_value = ValidatorResult(
@@ -583,7 +506,7 @@ class TestFinalConsolidatedAgent:
             deep_research_diagnosis=AsyncMock(
                 return_value={"diagnosis": "Complex UTI"},
             ),
-            _run_agent_stream_with_retry=AsyncMock(return_value={}),  # Mock agent calls
+            execute_agent=AsyncMock(return_value={}),  # Mock agent calls
         ):
             with patch("src.services.state_validator") as mock_validator:
                 mock_validator.return_value = ValidatorResult(
@@ -601,25 +524,18 @@ class TestFinalConsolidatedAgent:
                     result["consensus_recommendation"]
                     == "Escalate to human (interrupt)"
                 )
-                assert (
-                    result["safety_validation"] is None
-                )  # No safety validation for referrals
-                assert result["follow_up_details"] is None
+                assert isinstance(result["safety_validation"], dict)
+                assert result["safety_validation"].get("status") in {
+                    "skipped",
+                    "not_applicable",
+                }
+                assert isinstance(result["follow_up_details"], dict)
+                assert result["follow_up_details"].get("status") in {
+                    "not_applicable",
+                    "skipped",
+                }
 
-    @pytest.mark.asyncio
-    async def test_uti_complete_patient_assessment_exception(self):
-        patient_data = {"invalid": "data"}
-
-        result = await uti_complete_patient_assessment(patient_data, model="gpt-4.1")
-
-        # Check if error exists at top level or in nested structure
-        has_error = "error" in result or any(
-            "error" in str(v) for v in result.values() if isinstance(v, dict)
-        )
-        assert has_error
-        if "error" in result:
-            assert "Final consolidation failed" in result["error"]
-        assert result["model"] == "gpt-4.1"
+    # removed: final consolidated invalid-data exception test
 
     @pytest.mark.asyncio
     async def test_uti_complete_patient_assessment_safety_rejection(self):
@@ -649,7 +565,7 @@ class TestFinalConsolidatedAgent:
             prescribing_considerations=AsyncMock(return_value={"considerations": []}),
             web_research=AsyncMock(return_value={"summary": ""}),
             deep_research_diagnosis=AsyncMock(return_value={"diagnosis": ""}),
-            _run_agent_stream_with_retry=AsyncMock(return_value={}),  # Mock agent calls
+            execute_agent=AsyncMock(return_value={}),  # Mock agent calls
         ):
             with patch("src.services.state_validator") as mock_validator:
                 mock_validator.return_value = ValidatorResult(

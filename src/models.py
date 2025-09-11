@@ -565,6 +565,15 @@ class ConsensusLabel(str, Enum):
     validator_interrupt = "Escalate to human (validator fail)"
 
 
+class SectionStatus(str, Enum):
+    not_run = "not_run"
+    skipped = "skipped"
+    blocked = "blocked"
+    not_applicable = "not_applicable"
+    completed = "completed"
+    error = "error"
+
+
 class DoctorSummary(BaseModel):
     narrative: str = Field(default="")
     confidence: float = Field(default=0.0, ge=0.0, le=1.0)

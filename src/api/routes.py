@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
+from ..models import PatientState, Recommendation
 from ..services import (
     assess_and_plan,
     clinical_reasoning,
@@ -17,9 +18,6 @@ from ..services import (
 )
 from .dependencies import ConcurrencyLimiter, limiter, require_clients
 from .rate_limit import rate_limiter
-
-if TYPE_CHECKING:
-    from ..models import PatientState, Recommendation
 
 logger = logging.getLogger(__name__)
 
@@ -172,5 +170,3 @@ async def research_summary_endpoint(
         except Exception as e:
             logger.error("web_research failed: %s", e)
             raise HTTPException(status_code=500, detail="research_failed") from e
-
-

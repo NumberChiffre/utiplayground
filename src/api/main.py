@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
+from ..client import ensure_openai_client
 from .observability import register_metrics
 from .routes import router as api_router
 
@@ -16,6 +17,16 @@ app = FastAPI(
     title="UTI Assessment API",
     version=os.getenv("API_VERSION", "0.1.0"),
 )
+
+
+@app.on_event("startup")
+async def startup_event():
+    success = ensure_openai_client()
+    if success:
+        logger.info("OpenAI client and Weave tracing initialized successfully")
+    else:
+        logger.warning("Failed to initialize OpenAI client - missing OPENAI_API_KEY")
+
 
 app.include_router(api_router, prefix="/api")
 register_metrics(app)
